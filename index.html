@@ -140,12 +140,21 @@
   .pstack-txt strong{ font-weight:600; font-size:1rem; }
   .pstack-txt span{ font-family:var(--mono); font-size:.72rem; color:var(--faint); }
   .pstack-idx{ margin-left:auto; font-family:var(--mono); font-size:.72rem; color:var(--faint); flex:none; }
+  .pstack-row{ display:flex; flex-direction:column; }
+  .pstack-chevron{ font-size:.65rem; color:var(--faint); transition:transform .25s ease, color .25s ease; flex:none; }
+  .pstack-item.on .pstack-chevron{ transform:rotate(180deg); color:var(--accent); }
+  .pstack-panel{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s ease; }
+  .pstack-row.open .pstack-panel{ grid-template-rows:1fr; }
+  .pstack-panel-content{ overflow:hidden; }
+  .pstack-body{ color:var(--dim); font-size:.92rem; line-height:1.6; margin:14px 2px 0; }
+  .pstack-panel .d-meter{ margin:14px 2px 0; }
   @media (max-width:640px){
     .trajectory{ display:none; }
     .pstack{ display:flex; }
     .band{ padding:78px 0; }
     .head{ margin-bottom:44px; }
-    .detail{ margin-top:28px; }
+    h1.title{ min-height:3.15em; }
+    #demo{ display:none; }
   }
   @media (max-width:480px){
     .nav{ padding:12px 18px; }
@@ -177,6 +186,7 @@
   @media (max-width:560px){ .d-meter-top{justify-content:center; flex-wrap:wrap; text-align:center;} }
   @media (max-width:560px){ .detail{padding:26px 22px; flex-direction:column; text-align:center; gap:20px;}
     .detail .d-top{justify-content:center;} .d-visual{width:100px; height:100px;} }
+  @media (max-width:640px){ .detail{ display:none; } }
   @media (prefers-reduced-motion: reduce){ .d-visual .cardplanet{animation:none;} }
 
   /* use cases */
@@ -803,6 +813,8 @@
 
     var groups = [];
     var stackItems = [];
+    var stackPanels = [];
+    var stackRows = [];
     var stackHost = document.getElementById('pstack');
     vis.forEach(function(d,i){
       var px = pts[i][0], py = pts[i][1], r = d.r;
@@ -838,16 +850,54 @@
       g.appendChild(grp);
       groups.push(grp);
 
-      // mobile stack row
+      // mobile stack row (accordion: click expands the description under the card)
+      var row = document.createElement('div');
+      row.className = 'pstack-row';
+
       var btn = document.createElement('button');
       btn.className = 'pstack-item'; btn.type = 'button';
+      btn.setAttribute('aria-expanded', 'false');
       btn.innerHTML =
         '<span class="pstack-vis" style="width:'+(30+i*3)+'px;height:'+(30+i*3)+'px;">'+ cardPlanet(vis[i], 'p'+i) +'</span>'+
         '<span class="pstack-txt"><strong class="ps-name"></strong><span class="ps-tag"></span></span>'+
-        '<span class="pstack-idx">0'+(i+1)+'</span>';
-      btn.addEventListener('click', function(){ setActive(i); });
-      stackHost.appendChild(btn);
+        '<span class="pstack-idx">0'+(i+1)+'</span>'+
+        '<span class="pstack-chevron" aria-hidden="true">&#9662;</span>';
+
+      var panel = document.createElement('div');
+      panel.className = 'pstack-panel';
+      panel.innerHTML =
+        '<div class="pstack-panel-content">'+
+          '<p class="pstack-body"></p>'+
+          '<div class="d-meter">'+
+            '<div class="d-meter-top">'+
+              '<span class="d-meter-label ps-meter-label"></span>'+
+              '<span class="d-tag ps-meter-tag"></span>'+
+            '</div>'+
+            '<div class="d-meter-track"><div class="d-meter-fill" style="width:'+(Math.round((i+1)/vis.length*100))+'%"></div></div>'+
+          '</div>'+
+        '</div>';
+
+      btn.addEventListener('click', function(){
+        var isOpen = row.classList.contains('open');
+        stackRows.forEach(function(r){
+          r.classList.remove('open');
+          var b = r.querySelector('.pstack-item');
+          b.classList.remove('on');
+          b.setAttribute('aria-expanded', 'false');
+        });
+        if(!isOpen){
+          row.classList.add('open');
+          btn.classList.add('on');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      row.appendChild(btn);
+      row.appendChild(panel);
+      stackHost.appendChild(row);
       stackItems.push(btn);
+      stackPanels.push(panel);
+      stackRows.push(row);
     });
 
     function cardPlanet(d, gid){
@@ -875,8 +925,6 @@
       current = i;
       groups.forEach(function(gr){ gr.classList.remove('on'); });
       groups[i].classList.add('on');
-      stackItems.forEach(function(b){ b.classList.remove('on'); });
-      if(stackItems[i]) stackItems[i].classList.add('on');
       var p = T[lang].planets[i];
       document.getElementById('d-idx').textContent = '0'+(i+1);
       document.getElementById('d-name').textContent = p.n;
@@ -909,6 +957,12 @@
         b.querySelector('.ps-name').textContent = dict.planets[i].n;
         b.querySelector('.ps-tag').textContent = dict.planets[i].tag;
         b.setAttribute('aria-label', (dict.planetWord.charAt(0).toUpperCase()+dict.planetWord.slice(1))+' '+(i+1)+': '+dict.planets[i].n);
+      });
+      // mobile stack expandable panels
+      stackPanels.forEach(function(p,i){
+        p.querySelector('.pstack-body').textContent = dict.planets[i].body;
+        p.querySelector('.ps-meter-label').textContent = dict.productivity;
+        p.querySelector('.ps-meter-tag').textContent = '// '+dict.planetWord+' 0'+(i+1)+' · '+dict.planets[i].tag;
       });
       // productivity labels (axis + card meter)
       var ax = document.getElementById('prodAxis'); if(ax) ax.textContent = dict.productivity;
