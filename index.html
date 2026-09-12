@@ -95,6 +95,7 @@
     box-shadow:0 0 10px var(--accent);}
   h1.title{font-size:clamp(2.7rem, 7vw, 5.4rem); max-width:16ch; margin:0 auto;}
   .type-wrap{ display:inline-block; white-space:nowrap; }
+  .title-break{ display:none; }
   .type-word{ color:inherit; }
   .type-cursor{
     display:inline-block; width:.06em; height:0.85em; background:var(--accent);
@@ -147,28 +148,20 @@
   .pstack{ display:none; flex-direction:column; gap:10px; max-width:440px; margin:0 auto; }
   .pstack-item{ display:flex; align-items:center; gap:14px; width:100%; text-align:left;
     background:rgba(255,255,255,.02); border:1px solid var(--line); border-radius:12px;
-    padding:11px 14px; cursor:pointer; color:var(--ink); font-family:var(--sans);
-    transition:border-color .2s ease, background .2s ease;}
-  .pstack-item.on{ border-color:var(--accent); background:rgba(61,169,255,.09); }
+    padding:11px 14px; color:var(--ink); font-family:var(--sans);}
   .pstack-vis{ width:42px; height:42px; flex:none; }
   .pstack-txt{ display:flex; flex-direction:column; gap:2px; min-width:0; }
   .pstack-txt strong{ font-weight:600; font-size:1rem; }
   .pstack-txt span{ font-family:var(--mono); font-size:.72rem; color:var(--faint); }
   .pstack-idx{ margin-left:auto; font-family:var(--mono); font-size:.72rem; color:var(--faint); flex:none; }
-  .pstack-row{ display:flex; flex-direction:column; }
-  .pstack-chevron{ font-size:.65rem; color:var(--faint); transition:transform .25s ease, color .25s ease; flex:none; }
-  .pstack-item.on .pstack-chevron{ transform:rotate(180deg); color:var(--accent); }
-  .pstack-panel{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s ease; }
-  .pstack-row.open .pstack-panel{ grid-template-rows:1fr; }
-  .pstack-panel-content{ overflow:hidden; }
-  .pstack-body{ color:var(--dim); font-size:.92rem; line-height:1.6; margin:14px 2px 0; }
-  .pstack-panel .d-meter{ margin:14px 2px 0; }
   @media (max-width:640px){
     .trajectory{ display:none; }
     .pstack{ display:flex; }
     .band{ padding:78px 0; }
     .head{ margin-bottom:44px; }
     h1.title{ min-height:3.15em; }
+    .title-break{ display:inline; }
+    .type-wrap{ display:block; margin-top:.04em; }
   }
   @media (max-width:480px){
     .nav{ padding:12px 18px; }
@@ -188,7 +181,7 @@
   .detail .d-idx{font-family:var(--mono); font-size:.82rem; color:var(--accent);}
   .detail h3{font-size:1.5rem;}
   .detail p{color:var(--dim); line-height:1.66; font-size:1.02rem; margin:0;}
-  .detail p strong, .pstack-body strong, .lede strong, .head p strong{ color:var(--ink); font-weight:600; }
+  .detail p strong, .lede strong, .head p strong{ color:var(--ink); font-weight:600; }
   .detail .d-tag{font-family:var(--mono); font-size:.74rem; color:var(--faint);}
   .axis-label{font-family:var(--mono); font-size:12px; fill:var(--faint); letter-spacing:.04em;}
   .d-meter{margin-top:20px;}
@@ -385,7 +378,7 @@
   <section class="hero">
     <div class="wrap">
       <span class="eyebrow"><span class="pip"></span><span data-i18n="hero_eyebrow">AI setup for non-technical executives</span></span>
-      <h1 class="title"><span data-i18n="hero_title_prefix">There is much more beyond</span> <span class="type-wrap"><span id="typeWord" class="type-word"></span><span class="type-cursor" aria-hidden="true"></span></span></h1>
+      <h1 class="title"><span data-i18n="hero_title_prefix">There is much<br class="title-break"> more beyond</span> <span class="type-wrap"><span id="typeWord" class="type-word"></span><span class="type-cursor" aria-hidden="true"></span></span></h1>
       <p class="lede" data-i18n="hero_lede">87% of companies never get past the chat. I set up everything that comes after it: skills, workflows, agents.</p>
       <a href="https://www.linkedin.com/in/giovanni-s-5aa278158/" target="_blank" rel="noopener noreferrer" class="hero-byline">by Giovanni Salvi</a>
       <div class="hero-ctas">
@@ -564,7 +557,7 @@
 <footer>
   <div class="wrap">
     <div class="foot">
-      <span data-i18n="footer">beyond, AI setup for founders and executives</span>
+      <span data-i18n="footer">beyond, AI setup for non-technical executives</span>
       <div class="foot-right">
         <a href="mailto:btc@salvigiovanni.com" class="foot-link">btc@salvigiovanni.com</a>
         <a href="https://www.linkedin.com/in/giovanni-s-5aa278158/" target="_blank" rel="noopener noreferrer" class="foot-link">by Giovanni Salvi</a>
@@ -624,7 +617,7 @@
   /* ---------- interactive starfield with cursor parallax ---------- */
   (function(){
     var c = document.getElementById('stars'), x = c.getContext('2d');
-    var w, h, dpr, stars = [], mx = 0, my = 0, tx = 0, ty = 0;
+    var w, h, dpr, stars = [], meteors = [], mx = 0, my = 0, tx = 0, ty = 0;
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var rafId = null;
 
@@ -643,6 +636,7 @@
           ts: Math.random()*0.02 + 0.004
         });
       }
+      meteors = [];
       paint(); // always show a correct static frame, animating or not
     }
     function paint(){
@@ -661,8 +655,43 @@
         x.fill();
       }
     }
+    // occasional shooting stars — a rare, subtle streak, never during a static (reduced-motion) frame
+    function maybeSpawnMeteor(){
+      if(meteors.length >= 1 && Math.random() < 0.98) return;
+      if(Math.random() > 0.0035) return;
+      var ang = (Math.PI/4) + (Math.random()*0.5 - 0.25); // roughly diagonal, some variance
+      var speed = (7 + Math.random()*5) * dpr;
+      meteors.push({
+        x: Math.random()*w*0.8, y: Math.random()*h*0.4,
+        vx: Math.cos(ang)*speed, vy: Math.sin(ang)*speed,
+        len: (70 + Math.random()*50) * dpr,
+        life: 0, maxLife: 26 + Math.random()*16
+      });
+    }
+    function paintMeteors(){
+      for(var i=meteors.length-1; i>=0; i--){
+        var m = meteors[i];
+        m.x += m.vx; m.y += m.vy; m.life++;
+        var alpha = 1 - (m.life/m.maxLife);
+        if(alpha <= 0 || m.x - w > 60 || m.y - h > 60){ meteors.splice(i,1); continue; }
+        var d = Math.hypot(m.vx, m.vy) || 1;
+        var tailX = m.x - (m.vx/d)*m.len, tailY = m.y - (m.vy/d)*m.len;
+        var grad = x.createLinearGradient(m.x, m.y, tailX, tailY);
+        grad.addColorStop(0, 'rgba(255,255,255,'+(alpha*0.85)+')');
+        grad.addColorStop(1, 'rgba(122,162,255,0)');
+        x.strokeStyle = grad;
+        x.lineWidth = 1.3*dpr;
+        x.lineCap = 'round';
+        x.beginPath();
+        x.moveTo(m.x, m.y);
+        x.lineTo(tailX, tailY);
+        x.stroke();
+      }
+    }
     function loop(){
       paint();
+      maybeSpawnMeteor();
+      paintMeteors();
       rafId = requestAnimationFrame(loop);
     }
     function start(){
@@ -707,7 +736,7 @@
       en:{
         nav_cta:"Book a call",
         hero_eyebrow:"AI setup for non-technical executives",
-        hero_title_prefix:"There is much more beyond",
+        hero_title_prefix:"There is much<br class=\"title-break\"> more beyond",
         hero_lede:"<strong>87%</strong> of companies never get past the chat. I set up everything that comes after it: skills, workflows, agents.",
         hero_cta:"Book a call",
         hero_hint:"Move your cursor, the sky follows",
@@ -769,24 +798,24 @@
         final_h2:"Let's set up your AI system",
         final_p:"A 30-minute call to see what you're already using today, and exactly what's worth setting up <strong>first</strong>.",
         final_cta:"Book a call",
-        footer:"beyond, AI setup for founders and executives",
+        footer:"beyond, AI setup for non-technical executives",
         productivity:"Productivity",
         prod_high:"High", prod_med:"Medium",
         planetWord:"level",
         planets:[
-          {n:"Chat", tag:"where most stop", body:"Claude, ChatGPT, Gemini. One question, one answer — someone has to prompt it every time."},
-          {n:"Skills", tag:"consistent output", body:"The AI follows your standards every time, not just when you remember to ask it."},
-          {n:"Scheduled workflows", tag:"runs on its own", body:"Recurring tasks start on their own, every day or week, with no one remembering to launch them."},
-          {n:"MCP", tag:"connected to your tools", body:"The AI connects straight into the tools you use — email, Drive, Notion, your CRM."},
-          {n:"Subagents & Hooks", tag:"work in the background", body:"Specialists handle one job each, with automatic checks built into every critical step."},
-          {n:"Plugins", tag:"install once", body:"Ready-made bundles of skills and connections your team installs in a single click."},
-          {n:"AI as employee", tag:"handles the whole job", body:"An agent with standing instructions and memory that finishes a whole task, start to end."}
+          {n:"Chat", tag:"where most stop", body:"Claude, ChatGPT, Gemini. One question, one answer — <strong>someone</strong> has to <strong>prompt</strong> it every time."},
+          {n:"Skills", tag:"consistent output", body:"The AI follows your <strong>standards</strong> every time, not just when you <strong>remember</strong> to ask it."},
+          {n:"Scheduled workflows", tag:"runs on its own", body:"<strong>Recurring</strong> tasks start on their <strong>own</strong>, every day or week, with no one remembering to launch them."},
+          {n:"MCP", tag:"connected to your tools", body:"The AI <strong>connects</strong> straight into the <strong>tools</strong> you use — email, Drive, Notion, your CRM."},
+          {n:"Subagents & Hooks", tag:"work in the background", body:"<strong>Specialists</strong> handle one job each, with <strong>automatic</strong> checks built into every critical step."},
+          {n:"Plugins", tag:"install once", body:"<strong>Ready-made</strong> bundles of skills and connections your team installs in a single <strong>click</strong>."},
+          {n:"AI as employee", tag:"handles the whole job", body:"An <strong>agent</strong> with standing instructions and memory that <strong>finishes</strong> a whole task, start to end."}
         ]
       },
       it:{
         nav_cta:"Prenota una call",
         hero_eyebrow:"Per manager non tecnici",
-        hero_title_prefix:"C'è molto di più oltre",
+        hero_title_prefix:"C'è molto<br class=\"title-break\"> di più oltre",
         hero_lede:"L'<strong>87%</strong> delle aziende che usano l'AI si ferma alla chat. Del setup mi occupo io: skill, workflow e agenti.",
         hero_cta:"Prenota una call",
         hero_hint:"Muovi il cursore, il cielo ti segue",
@@ -848,18 +877,18 @@
         final_h2:"Impostiamo il tuo sistema AI",
         final_p:"Mezz'ora insieme per capire cosa usi già oggi, e da dove conviene davvero partire <strong>prima</strong>.",
         final_cta:"Prenota una call",
-        footer:"beyond, AI per founder e manager non tecnici",
+        footer:"beyond, AI per manager non tecnici",
         productivity:"Produttività",
         prod_high:"Alta", prod_med:"Media",
         planetWord:"livello",
         planets:[
-          {n:"Chat", tag:"dove quasi tutti si fermano", body:"Claude, ChatGPT, Gemini. Una domanda, una risposta. Utile, ma qualcuno deve scrivere il prompt ogni volta. È qui che si ferma l'87% delle aziende."},
-          {n:"Skills", tag:"risultati coerenti", body:"L'AI segue gli standard della tua azienda ogni volta, non solo quando ti ricordi di chiederlo. Il modo in cui scrivi un'email, controlli un contratto o prepari un report diventa quello di default."},
-          {n:"Workflow schedulati", tag:"partono da soli", body:"I lavori ricorrenti partono da soli, ogni giorno o ogni settimana, senza che nessuno debba ricordarsi di avviarli."},
-          {n:"MCP", tag:"collegata ai tuoi strumenti", body:"L'AI si collega agli strumenti che usi già: email, Drive, Notion, il tuo CRM. Legge e agisce dentro i tuoi sistemi, invece di restare chiusa in una scheda a parte."},
-          {n:"Subagent & Hooks", tag:"lavorano in background", body:"Specialisti che si occupano di un singolo compito da soli, con controlli automatici a ogni passaggio critico. Il lavoro complesso resta affidabile anche senza che tu stia lì a controllare."},
-          {n:"Plugin", tag:"si installano una volta", body:"Pacchetti già pronti di skill, comandi e collegamenti che il team installa con un clic, invece di rifare ogni volta la stessa configurazione."},
-          {n:"AI come dipendente", tag:"gestisce tutto il lavoro", body:"Un agente con istruzioni fisse, memoria e accessi, che porta a termine un'attività dall'inizio alla fine invece di rispondere a una domanda per volta."}
+          {n:"Chat", tag:"dove quasi tutti si fermano", body:"Claude, ChatGPT, Gemini. Una domanda, una risposta — il <strong>prompt</strong> lo scrivi <strong>tu</strong>, ogni volta."},
+          {n:"Skills", tag:"risultati coerenti", body:"L'AI segue i tuoi <strong>standard</strong> ogni volta, non solo quando te ne <strong>ricordi</strong>."},
+          {n:"Workflow schedulati", tag:"partono da soli", body:"I lavori <strong>ricorrenti</strong> partono da <strong>soli</strong>, ogni giorno o settimana, senza che nessuno li avvii."},
+          {n:"MCP", tag:"collegata ai tuoi strumenti", body:"L'AI si <strong>collega</strong> agli <strong>strumenti</strong> che usi già — email, Drive, Notion, il tuo CRM."},
+          {n:"Subagent & Hooks", tag:"lavorano in background", body:"<strong>Specialisti</strong> che gestiscono un compito ciascuno, con controlli <strong>automatici</strong> a ogni passaggio critico."},
+          {n:"Plugin", tag:"si installano una volta", body:"Pacchetti già <strong>pronti</strong> di skill e collegamenti che il team installa con un solo <strong>clic</strong>."},
+          {n:"AI come dipendente", tag:"gestisce tutto il lavoro", body:"Un <strong>agente</strong> con istruzioni fisse e memoria che porta a <strong>termine</strong> un intero compito da solo."}
         ]
       }
     };
@@ -885,8 +914,6 @@
 
     var groups = [];
     var stackItems = [];
-    var stackPanels = [];
-    var stackRows = [];
     var stackHost = document.getElementById('pstack');
     vis.forEach(function(d,i){
       var px = pts[i][0], py = pts[i][1], r = d.r;
@@ -922,54 +949,16 @@
       g.appendChild(grp);
       groups.push(grp);
 
-      // mobile stack row (accordion: click expands the description under the card)
-      var row = document.createElement('div');
-      row.className = 'pstack-row';
-
-      var btn = document.createElement('button');
-      btn.className = 'pstack-item'; btn.type = 'button';
-      btn.setAttribute('aria-expanded', 'false');
-      btn.innerHTML =
+      // mobile stack row: a plain, non-interactive line naming the level
+      var item = document.createElement('div');
+      item.className = 'pstack-item';
+      item.innerHTML =
         '<span class="pstack-vis" style="width:'+(30+i*3)+'px;height:'+(30+i*3)+'px;">'+ cardPlanet(vis[i], 'p'+i) +'</span>'+
         '<span class="pstack-txt"><strong class="ps-name"></strong><span class="ps-tag"></span></span>'+
-        '<span class="pstack-idx">0'+(i+1)+'</span>'+
-        '<span class="pstack-chevron" aria-hidden="true">&#9662;</span>';
+        '<span class="pstack-idx">0'+(i+1)+'</span>';
 
-      var panel = document.createElement('div');
-      panel.className = 'pstack-panel';
-      panel.innerHTML =
-        '<div class="pstack-panel-content">'+
-          '<p class="pstack-body"></p>'+
-          '<div class="d-meter">'+
-            '<div class="d-meter-top">'+
-              '<span class="d-meter-label ps-meter-label"></span>'+
-              '<span class="d-tag ps-meter-tag"></span>'+
-            '</div>'+
-            '<div class="d-meter-track"><div class="d-meter-fill" style="width:'+(Math.round((i+1)/vis.length*100))+'%"></div></div>'+
-          '</div>'+
-        '</div>';
-
-      btn.addEventListener('click', function(){
-        var isOpen = row.classList.contains('open');
-        stackRows.forEach(function(r){
-          r.classList.remove('open');
-          var b = r.querySelector('.pstack-item');
-          b.classList.remove('on');
-          b.setAttribute('aria-expanded', 'false');
-        });
-        if(!isOpen){
-          row.classList.add('open');
-          btn.classList.add('on');
-          btn.setAttribute('aria-expanded', 'true');
-        }
-      });
-
-      row.appendChild(btn);
-      row.appendChild(panel);
-      stackHost.appendChild(row);
-      stackItems.push(btn);
-      stackPanels.push(panel);
-      stackRows.push(row);
+      stackHost.appendChild(item);
+      stackItems.push(item);
     });
 
     function cardPlanet(d, gid){
@@ -1019,8 +1008,8 @@
         var k = el.getAttribute('data-i18n');
         if(dict[k] != null) el.textContent = dict[k];
       });
-      // section descriptions carry an emphasised phrase, so they need real HTML
-      ['hero_lede','map_p','demo_p','how_p','final_p'].forEach(function(k){
+      // section descriptions (and the hero title's mobile break) carry real HTML
+      ['hero_title_prefix','hero_lede','map_p','demo_p','how_p','final_p'].forEach(function(k){
         var el = document.querySelector('[data-i18n="'+k+'"]');
         if(el && dict[k] != null) el.innerHTML = dict[k];
       });
@@ -1033,13 +1022,6 @@
       stackItems.forEach(function(b,i){
         b.querySelector('.ps-name').textContent = dict.planets[i].n;
         b.querySelector('.ps-tag').textContent = dict.planets[i].tag;
-        b.setAttribute('aria-label', (dict.planetWord.charAt(0).toUpperCase()+dict.planetWord.slice(1))+' '+(i+1)+': '+dict.planets[i].n);
-      });
-      // mobile stack expandable panels
-      stackPanels.forEach(function(p,i){
-        p.querySelector('.pstack-body').innerHTML = dict.planets[i].body;
-        p.querySelector('.ps-meter-label').textContent = dict.productivity;
-        p.querySelector('.ps-meter-tag').textContent = '// '+dict.planetWord+' 0'+(i+1)+' · '+dict.planets[i].tag;
       });
       // productivity labels (axis + card meter)
       var ax = document.getElementById('prodAxis'); if(ax) ax.textContent = dict.productivity;
