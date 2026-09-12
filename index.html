@@ -84,12 +84,7 @@
   .lang-sep{color:var(--faint); font-family:var(--mono); font-size:.8rem;}
   @media (max-width:480px){ .nav-right{gap:12px;} }
 
-  /* scroll progress */
-  .scroll-progress{ position:absolute; left:0; right:0; bottom:0; height:2px; overflow:hidden; }
-  .scroll-progress-fill{ height:100%; width:0%;
-    background:linear-gradient(90deg,var(--accent-2),var(--accent)); transition:width .08s linear; }
   #map, #demo, #howwework, #book{ scroll-margin-top:64px; }
-  @media (prefers-reduced-motion: reduce){ .scroll-progress-fill{ transition:none; } }
 
   /* hero */
   .hero{min-height:100vh; display:flex; flex-direction:column; justify-content:center;
@@ -382,7 +377,6 @@
       <a href="https://calendly.com/g-salvi-bs/get-to-know-meeting" target="_blank" rel="noopener noreferrer" class="cta" data-i18n="nav_cta">Book a call</a>
     </div>
   </div>
-  <div class="scroll-progress"><div class="scroll-progress-fill" id="scrollProgress"></div></div>
 </header>
 
 <main id="top">
@@ -1264,27 +1258,6 @@
     } else { revealDemo(); }
   })();
 
-  /* ---------- scroll progress ---------- */
-  (function(){
-    var fill = document.getElementById('scrollProgress');
-    if(!fill) return;
-
-    function updateProgress(){
-      var doc = document.documentElement;
-      var max = doc.scrollHeight - doc.clientHeight;
-      var pct = max > 0 ? ((doc.scrollTop || document.body.scrollTop) / max * 100) : 0;
-      fill.style.width = pct + '%';
-    }
-    var ticking = false;
-    function onScroll(){
-      if(ticking) return;
-      ticking = true;
-      requestAnimationFrame(function(){ updateProgress(); ticking = false; });
-    }
-    window.addEventListener('scroll', onScroll, {passive:true});
-    window.addEventListener('resize', onScroll);
-    updateProgress();
-  })();
 </script>
 
 </body>
