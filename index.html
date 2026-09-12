@@ -174,6 +174,7 @@
   .detail .d-idx{font-family:var(--mono); font-size:.82rem; color:var(--accent);}
   .detail h3{font-size:1.5rem;}
   .detail p{color:var(--dim); line-height:1.66; font-size:1.02rem; margin:0;}
+  .detail p strong, .pstack-body strong{ color:var(--ink); font-weight:600; }
   .detail .d-tag{font-family:var(--mono); font-size:.74rem; color:var(--faint);}
   .axis-label{font-family:var(--mono); font-size:12px; fill:var(--faint); letter-spacing:.04em;}
   .d-meter{margin-top:20px;}
@@ -702,13 +703,13 @@
         prod_high:"High", prod_med:"Medium",
         planetWord:"level",
         planets:[
-          {n:"Chat", tag:"where most stop", body:"Claude, ChatGPT, Gemini. One question, one answer. Useful, but someone has to prompt it every single time. This is where 87% of companies stop."},
-          {n:"Skills", tag:"consistent output", body:"The AI follows your company's standards every time, not only when you remember to ask. How you write an email, review a contract or build a report becomes the default."},
-          {n:"Scheduled workflows", tag:"runs on its own", body:"Recurring tasks start automatically, every day or every week, without anyone remembering to launch them."},
-          {n:"MCP", tag:"connected to your tools", body:"The AI connects to the tools you already use, like email, Drive, Notion and your CRM. It reads and acts inside your systems instead of living in a separate tab."},
-          {n:"Subagents & Hooks", tag:"work in the background", body:"Specialists that handle one job on their own, with automatic checks at every critical step. Complex work stays reliable without you watching over it."},
-          {n:"Plugins", tag:"install once", body:"Ready-made bundles of skills, commands and connections your team installs in one click, instead of rebuilding the same setup every time."},
-          {n:"AI as employee", tag:"handles the whole job", body:"An agent with standing instructions, memory and access that finishes a task from start to end, instead of answering one question at a time."}
+          {n:"Chat", tag:"where most stop", body:"Claude, ChatGPT, Gemini. One question, one answer. Useful, but <strong>someone has to prompt it every single time</strong>. This is where <strong>87% of companies stop</strong>."},
+          {n:"Skills", tag:"consistent output", body:"The AI <strong>follows your company's standards every time</strong>, not only when you remember to ask. How you write an email, review a contract or build a report becomes the default."},
+          {n:"Scheduled workflows", tag:"runs on its own", body:"Recurring tasks <strong>start automatically</strong>, every day or every week, without anyone remembering to launch them."},
+          {n:"MCP", tag:"connected to your tools", body:"The AI <strong>connects to the tools you already use</strong>, like email, Drive, Notion and your CRM. It reads and acts inside your systems instead of living in a separate tab."},
+          {n:"Subagents & Hooks", tag:"work in the background", body:"Specialists that handle one job on their own, with <strong>automatic checks at every critical step</strong>. Complex work stays reliable without you watching over it."},
+          {n:"Plugins", tag:"install once", body:"Ready-made bundles of skills, commands and connections your team <strong>installs in one click</strong>, instead of rebuilding the same setup every time."},
+          {n:"AI as employee", tag:"handles the whole job", body:"An agent with standing instructions, memory and access that <strong>finishes a task from start to end</strong>, instead of answering one question at a time."}
         ]
       },
       it:{
@@ -781,13 +782,13 @@
         prod_high:"Alta", prod_med:"Media",
         planetWord:"livello",
         planets:[
-          {n:"Chat", tag:"dove quasi tutti si fermano", body:"Claude, ChatGPT, Gemini. Una domanda, una risposta. Utile, ma qualcuno deve scrivere il prompt ogni volta. È qui che si ferma l'87% delle aziende."},
-          {n:"Skills", tag:"risultati coerenti", body:"L'AI segue gli standard della tua azienda ogni volta, non solo quando ti ricordi di chiederlo. Il modo in cui scrivi un'email, controlli un contratto o prepari un report diventa quello di default."},
-          {n:"Workflow schedulati", tag:"partono da soli", body:"I lavori ricorrenti partono da soli, ogni giorno o ogni settimana, senza che nessuno debba ricordarsi di avviarli."},
-          {n:"MCP", tag:"collegata ai tuoi strumenti", body:"L'AI si collega agli strumenti che usi già: email, Drive, Notion, il tuo CRM. Legge e agisce dentro i tuoi sistemi, invece di restare chiusa in una scheda a parte."},
-          {n:"Subagent & Hooks", tag:"lavorano in background", body:"Specialisti che si occupano di un singolo compito da soli, con controlli automatici a ogni passaggio critico. Il lavoro complesso resta affidabile anche senza che tu stia lì a controllare."},
-          {n:"Plugin", tag:"si installano una volta", body:"Pacchetti già pronti di skill, comandi e collegamenti che il team installa con un clic, invece di rifare ogni volta la stessa configurazione."},
-          {n:"AI come dipendente", tag:"gestisce tutto il lavoro", body:"Un agente con istruzioni fisse, memoria e accessi, che porta a termine un'attività dall'inizio alla fine invece di rispondere a una domanda per volta."}
+          {n:"Chat", tag:"dove quasi tutti si fermano", body:"Claude, ChatGPT, Gemini. Una domanda, una risposta. Utile, ma <strong>qualcuno deve scrivere il prompt ogni volta</strong>. È qui che si ferma <strong>l'87% delle aziende</strong>."},
+          {n:"Skills", tag:"risultati coerenti", body:"L'AI <strong>segue gli standard della tua azienda ogni volta</strong>, non solo quando ti ricordi di chiederlo. Il modo in cui scrivi un'email, controlli un contratto o prepari un report diventa quello di default."},
+          {n:"Workflow schedulati", tag:"partono da soli", body:"I lavori ricorrenti <strong>partono da soli</strong>, ogni giorno o ogni settimana, senza che nessuno debba ricordarsi di avviarli."},
+          {n:"MCP", tag:"collegata ai tuoi strumenti", body:"L'AI <strong>si collega agli strumenti che usi già</strong>: email, Drive, Notion, il tuo CRM. Legge e agisce dentro i tuoi sistemi, invece di restare chiusa in una scheda a parte."},
+          {n:"Subagent & Hooks", tag:"lavorano in background", body:"Specialisti che si occupano di un singolo compito da soli, con <strong>controlli automatici a ogni passaggio critico</strong>. Il lavoro complesso resta affidabile anche senza che tu stia lì a controllare."},
+          {n:"Plugin", tag:"si installano una volta", body:"Pacchetti già pronti di skill, comandi e collegamenti che il team <strong>installa con un clic</strong>, invece di rifare ogni volta la stessa configurazione."},
+          {n:"AI come dipendente", tag:"gestisce tutto il lavoro", body:"Un agente con istruzioni fisse, memoria e accessi, che <strong>porta a termine un'attività dall'inizio alla fine</strong> invece di rispondere a una domanda per volta."}
         ]
       }
     };
@@ -928,7 +929,7 @@
       var p = T[lang].planets[i];
       document.getElementById('d-idx').textContent = '0'+(i+1);
       document.getElementById('d-name').textContent = p.n;
-      document.getElementById('d-body').textContent = p.body;
+      document.getElementById('d-body').innerHTML = p.body;
       document.getElementById('d-tag').textContent = '// '+T[lang].planetWord+' 0'+(i+1)+' · '+p.tag;
       document.getElementById('d-visual').innerHTML = cardPlanet(vis[i], 'card');
       // productivity rises with each level
@@ -960,7 +961,7 @@
       });
       // mobile stack expandable panels
       stackPanels.forEach(function(p,i){
-        p.querySelector('.pstack-body').textContent = dict.planets[i].body;
+        p.querySelector('.pstack-body').innerHTML = dict.planets[i].body;
         p.querySelector('.ps-meter-label').textContent = dict.productivity;
         p.querySelector('.ps-meter-tag').textContent = '// '+dict.planetWord+' 0'+(i+1)+' · '+dict.planets[i].tag;
       });
