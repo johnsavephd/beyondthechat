@@ -84,22 +84,11 @@
   .lang-sep{color:var(--faint); font-family:var(--mono); font-size:.8rem;}
   @media (max-width:480px){ .nav-right{gap:12px;} }
 
-  /* scroll progress + section rail */
+  /* scroll progress */
   .scroll-progress{ position:absolute; left:0; right:0; bottom:0; height:2px; overflow:hidden; }
   .scroll-progress-fill{ height:100%; width:0%;
     background:linear-gradient(90deg,var(--accent-2),var(--accent)); transition:width .08s linear; }
-  .rail{ position:fixed; right:22px; top:50%; transform:translateY(-50%); z-index:39;
-    display:flex; flex-direction:column; gap:18px; }
-  .rail-dot{ position:relative; width:9px; height:9px; border-radius:50%; border:none; padding:0;
-    background:rgba(238,240,245,.18); cursor:pointer; transition:background .25s ease, transform .25s ease; }
-  .rail-dot:hover, .rail-dot:focus-visible{ background:var(--dim); }
-  .rail-dot.on{ background:var(--accent); transform:scale(1.35); box-shadow:0 0 10px rgba(61,169,255,.7); }
-  .rail-dot .rail-label{ position:absolute; right:20px; top:50%; transform:translateY(-50%);
-    font-family:var(--mono); font-size:.72rem; color:var(--dim); white-space:nowrap;
-    opacity:0; pointer-events:none; transition:opacity .2s ease; }
-  .rail-dot.on .rail-label, .rail-dot:hover .rail-label, .rail-dot:focus-visible .rail-label{ opacity:1; }
   #map, #demo, #howwework, #book{ scroll-margin-top:64px; }
-  @media (max-width:900px){ .rail{ display:none; } }
   @media (prefers-reduced-motion: reduce){ .scroll-progress-fill{ transition:none; } }
 
   /* hero */
@@ -204,7 +193,7 @@
   .detail .d-idx{font-family:var(--mono); font-size:.82rem; color:var(--accent);}
   .detail h3{font-size:1.5rem;}
   .detail p{color:var(--dim); line-height:1.66; font-size:1.02rem; margin:0;}
-  .detail p strong, .pstack-body strong{ color:var(--ink); font-weight:600; }
+  .detail p strong, .pstack-body strong, .lede strong, .head p strong{ color:var(--ink); font-weight:600; }
   .detail .d-tag{font-family:var(--mono); font-size:.74rem; color:var(--faint);}
   .axis-label{font-family:var(--mono); font-size:12px; fill:var(--faint); letter-spacing:.04em;}
   .d-meter{margin-top:20px;}
@@ -396,13 +385,6 @@
   <div class="scroll-progress"><div class="scroll-progress-fill" id="scrollProgress"></div></div>
 </header>
 
-<nav class="rail" id="rail" aria-label="Section navigation">
-  <button type="button" class="rail-dot" data-target="map" aria-label="Beyond the chat"><span class="rail-label" data-i18n="map_kicker">Beyond the chat</span></button>
-  <button type="button" class="rail-dot" data-target="demo" aria-label="One request, two outcomes"><span class="rail-label" data-i18n="demo_kicker">One request, two outcomes</span></button>
-  <button type="button" class="rail-dot" data-target="howwework" aria-label="How we work"><span class="rail-label" data-i18n="how_kicker">How we work</span></button>
-  <button type="button" class="rail-dot" data-target="book" aria-label="Next step"><span class="rail-label" data-i18n="final_kicker">Next step</span></button>
-</nav>
-
 <main id="top">
 
   <!-- HERO -->
@@ -543,7 +525,7 @@
   <section class="band" id="howwework">
     <div class="wrap">
       <div class="head">
-        <span class="kicker" data-i18n="how_kicker">How we work</span>
+        <span class="kicker" data-i18n="how_kicker">How I work</span>
         <h2 data-i18n="how_h2">What to expect</h2>
         <p data-i18n="how_p">A short, deliberate process. Not a subscription, not an open-ended engagement.</p>
       </div>
@@ -732,16 +714,16 @@
         nav_cta:"Book a call",
         hero_eyebrow:"AI setup for non-technical executives",
         hero_title_prefix:"There is much more beyond",
-        hero_lede:"87% of companies using AI never get past the chat. I set up everything that comes after it: skills, workflows, integrations, and agents that finish real work on their own.",
+        hero_lede:"<strong>87% of companies using AI never get past the chat.</strong> I set up everything that comes after it: skills, workflows, integrations, and agents that finish real work on their own.",
         hero_cta:"Book a call",
         hero_hint:"Move your cursor, the sky follows",
         map_kicker:"Beyond the chat",
         map_h2:"Six levels most companies never set up",
-        map_p:"Each level makes your team faster than the one before it, up to AI that runs whole tasks without supervision. You don't need to be technical to use them, only someone to set them up.",
+        map_p:"Each level makes your team faster than the one before it, up to AI that runs whole tasks without supervision. <strong>You don't need to be technical to use them, only someone to set them up.</strong>",
         work_kicker:"In practice",
         demo_kicker:"One request, two outcomes",
         demo_h2:"What the right AI setup actually saves you",
-        demo_p:"The exact same request, sent to Claude with nothing set up, and to Claude with the right setup already in place.",
+        demo_p:"The exact same request, sent to Claude with <strong>nothing set up</strong>, and to Claude with <strong>the right setup already in place</strong>.",
         demo_left_label:"No setup",
         demo_right_label:"With the right setup",
         demo_left_badge:"32 messages",
@@ -778,9 +760,9 @@
         case4_t:"Investor update", case4_b:"A monthly letter drafted on your real numbers, ready to review in ten minutes.",
         case5_t:"Team onboarding", case5_b:"The rest of your team inherits the same standards without writing a prompt.",
         case6_t:"Due diligence", case6_b:"A first read of contracts and data rooms, with the points to check surfaced for you.",
-        how_kicker:"How we work",
+        how_kicker:"How I work",
         how_h2:"What to expect",
-        how_p:"A clear path, from the first call to a system your team runs on its own.",
+        how_p:"A clear path, from the first call to <strong>a system your team runs on its own</strong>.",
         how1_t:"Intro call",
         how1_b:"30 minutes to see where your team stands and what to set up first.",
         how2_t:"Kickoff",
@@ -791,36 +773,36 @@
         how4_b:"Each workflow gets built and tested against your real work before it goes live.",
         final_kicker:"Next step",
         final_h2:"Let's set up your AI system",
-        final_p:"A 30-minute call to see what you're already using and what's worth setting up first.",
+        final_p:"A 30-minute call to see what you're already using and <strong>what's worth setting up first</strong>.",
         final_cta:"Book a call",
         footer:"beyond, AI setup for founders and executives",
         productivity:"Productivity",
         prod_high:"High", prod_med:"Medium",
         planetWord:"level",
         planets:[
-          {n:"Chat", tag:"where most stop", body:"Claude, ChatGPT, Gemini. One question, one answer. Useful, but <strong>someone has to prompt it every single time</strong>. This is where <strong>87% of companies stop</strong>."},
-          {n:"Skills", tag:"consistent output", body:"The AI <strong>follows your company's standards every time</strong>, not only when you remember to ask. How you write an email, review a contract or build a report becomes the default."},
-          {n:"Scheduled workflows", tag:"runs on its own", body:"Recurring tasks <strong>start automatically</strong>, every day or every week, without anyone remembering to launch them."},
-          {n:"MCP", tag:"connected to your tools", body:"The AI <strong>connects to the tools you already use</strong>, like email, Drive, Notion and your CRM. It reads and acts inside your systems instead of living in a separate tab."},
-          {n:"Subagents & Hooks", tag:"work in the background", body:"Specialists that handle one job on their own, with <strong>automatic checks at every critical step</strong>. Complex work stays reliable without you watching over it."},
-          {n:"Plugins", tag:"install once", body:"Ready-made bundles of skills, commands and connections your team <strong>installs in one click</strong>, instead of rebuilding the same setup every time."},
-          {n:"AI as employee", tag:"handles the whole job", body:"An agent with standing instructions, memory and access that <strong>finishes a task from start to end</strong>, instead of answering one question at a time."}
+          {n:"Chat", tag:"where most stop", body:"Claude, ChatGPT, Gemini. One question, one answer. Useful, but someone has to prompt it every single time. This is where 87% of companies stop."},
+          {n:"Skills", tag:"consistent output", body:"The AI follows your company's standards every time, not only when you remember to ask. How you write an email, review a contract or build a report becomes the default."},
+          {n:"Scheduled workflows", tag:"runs on its own", body:"Recurring tasks start automatically, every day or every week, without anyone remembering to launch them."},
+          {n:"MCP", tag:"connected to your tools", body:"The AI connects to the tools you already use, like email, Drive, Notion and your CRM. It reads and acts inside your systems instead of living in a separate tab."},
+          {n:"Subagents & Hooks", tag:"work in the background", body:"Specialists that handle one job on their own, with automatic checks at every critical step. Complex work stays reliable without you watching over it."},
+          {n:"Plugins", tag:"install once", body:"Ready-made bundles of skills, commands and connections your team installs in one click, instead of rebuilding the same setup every time."},
+          {n:"AI as employee", tag:"handles the whole job", body:"An agent with standing instructions, memory and access that finishes a task from start to end, instead of answering one question at a time."}
         ]
       },
       it:{
         nav_cta:"Prenota una call",
         hero_eyebrow:"Per manager non tecnici",
         hero_title_prefix:"C'è molto di più oltre",
-        hero_lede:"L'87% delle aziende che usano l'AI si ferma alla chat, senza rendersene conto. È solo il punto di partenza: con skill, workflow e agenti integrati nei tuoi strumenti, l'AI comincia a lavorare secondo i tuoi standard, non i suoi. Del setup mi occupo io.",
+        hero_lede:"<strong>L'87% delle aziende che usano l'AI si ferma alla chat</strong>, senza rendersene conto. È solo il punto di partenza: con skill, workflow e agenti integrati nei tuoi strumenti, l'AI comincia a lavorare secondo i tuoi standard, non i suoi. Del setup mi occupo io.",
         hero_cta:"Prenota una call",
         hero_hint:"Muovi il cursore, il cielo ti segue",
         map_kicker:"Oltre la chat",
         map_h2:"Sei livelli che quasi nessuno imposta",
-        map_p:"Ogni livello fa lavorare il team più in fretta del precedente, fino a un'AI che gestisce interi task da sola. Per usarli non serve essere tecnici, serve qualcuno che li imposti.",
+        map_p:"Ogni livello fa lavorare il team più in fretta del precedente, fino a un'AI che gestisce interi task da sola. <strong>Per usarli non serve essere tecnici, serve qualcuno che li imposti.</strong>",
         work_kicker:"In pratica",
         demo_kicker:"Stessa richiesta, due risultati",
         demo_h2:"Cosa ti fa risparmiare davvero il setup AI giusto",
-        demo_p:"La stessa identica richiesta, mandata a Claude senza nulla di impostato, e a Claude con il setup giusto già pronto.",
+        demo_p:"La stessa identica richiesta, mandata a Claude <strong>senza nulla di impostato</strong>, e a Claude <strong>con il setup giusto già pronto</strong>.",
         demo_left_label:"Senza setup",
         demo_right_label:"Con il setup giusto",
         demo_left_badge:"32 messaggi",
@@ -857,9 +839,9 @@
         case4_t:"L'update agli investitori", case4_b:"La lettera mensile agli investitori, scritta sui numeri veri dell'azienda e pronta da rivedere in dieci minuti.",
         case5_t:"Il resto del team", case5_b:"Anche gli altri lavorano con gli stessi standard, senza dover scrivere un prompt.",
         case6_t:"Due diligence", case6_b:"Una prima lettura di contratti e data room, con i punti da controllare già messi in evidenza.",
-        how_kicker:"Come lavoriamo",
+        how_kicker:"Come lavoro",
         how_h2:"Cosa aspettarsi",
-        how_p:"Un percorso chiaro, dalla prima call a un sistema che il team usa da solo.",
+        how_p:"Un percorso chiaro, dalla prima call a <strong>un sistema che il team usa da solo</strong>.",
         how1_t:"Call introduttiva",
         how1_b:"30 minuti per capire a che punto è il team e cosa impostare per primo.",
         how2_t:"Kickoff",
@@ -870,20 +852,20 @@
         how4_b:"Ogni workflow viene costruito e testato sul lavoro reale prima di andare in uso.",
         final_kicker:"Prossimo passo",
         final_h2:"Impostiamo il tuo sistema AI",
-        final_p:"Mezz'ora insieme per capire cosa usi già e da dove conviene partire.",
+        final_p:"Mezz'ora insieme per capire cosa usi già e <strong>da dove conviene partire</strong>.",
         final_cta:"Prenota una call",
         footer:"beyond, AI per founder e manager non tecnici",
         productivity:"Produttività",
         prod_high:"Alta", prod_med:"Media",
         planetWord:"livello",
         planets:[
-          {n:"Chat", tag:"dove quasi tutti si fermano", body:"Claude, ChatGPT, Gemini. Una domanda, una risposta. Utile, ma <strong>qualcuno deve scrivere il prompt ogni volta</strong>. È qui che si ferma <strong>l'87% delle aziende</strong>."},
-          {n:"Skills", tag:"risultati coerenti", body:"L'AI <strong>segue gli standard della tua azienda ogni volta</strong>, non solo quando ti ricordi di chiederlo. Il modo in cui scrivi un'email, controlli un contratto o prepari un report diventa quello di default."},
-          {n:"Workflow schedulati", tag:"partono da soli", body:"I lavori ricorrenti <strong>partono da soli</strong>, ogni giorno o ogni settimana, senza che nessuno debba ricordarsi di avviarli."},
-          {n:"MCP", tag:"collegata ai tuoi strumenti", body:"L'AI <strong>si collega agli strumenti che usi già</strong>: email, Drive, Notion, il tuo CRM. Legge e agisce dentro i tuoi sistemi, invece di restare chiusa in una scheda a parte."},
-          {n:"Subagent & Hooks", tag:"lavorano in background", body:"Specialisti che si occupano di un singolo compito da soli, con <strong>controlli automatici a ogni passaggio critico</strong>. Il lavoro complesso resta affidabile anche senza che tu stia lì a controllare."},
-          {n:"Plugin", tag:"si installano una volta", body:"Pacchetti già pronti di skill, comandi e collegamenti che il team <strong>installa con un clic</strong>, invece di rifare ogni volta la stessa configurazione."},
-          {n:"AI come dipendente", tag:"gestisce tutto il lavoro", body:"Un agente con istruzioni fisse, memoria e accessi, che <strong>porta a termine un'attività dall'inizio alla fine</strong> invece di rispondere a una domanda per volta."}
+          {n:"Chat", tag:"dove quasi tutti si fermano", body:"Claude, ChatGPT, Gemini. Una domanda, una risposta. Utile, ma qualcuno deve scrivere il prompt ogni volta. È qui che si ferma l'87% delle aziende."},
+          {n:"Skills", tag:"risultati coerenti", body:"L'AI segue gli standard della tua azienda ogni volta, non solo quando ti ricordi di chiederlo. Il modo in cui scrivi un'email, controlli un contratto o prepari un report diventa quello di default."},
+          {n:"Workflow schedulati", tag:"partono da soli", body:"I lavori ricorrenti partono da soli, ogni giorno o ogni settimana, senza che nessuno debba ricordarsi di avviarli."},
+          {n:"MCP", tag:"collegata ai tuoi strumenti", body:"L'AI si collega agli strumenti che usi già: email, Drive, Notion, il tuo CRM. Legge e agisce dentro i tuoi sistemi, invece di restare chiusa in una scheda a parte."},
+          {n:"Subagent & Hooks", tag:"lavorano in background", body:"Specialisti che si occupano di un singolo compito da soli, con controlli automatici a ogni passaggio critico. Il lavoro complesso resta affidabile anche senza che tu stia lì a controllare."},
+          {n:"Plugin", tag:"si installano una volta", body:"Pacchetti già pronti di skill, comandi e collegamenti che il team installa con un clic, invece di rifare ogni volta la stessa configurazione."},
+          {n:"AI come dipendente", tag:"gestisce tutto il lavoro", body:"Un agente con istruzioni fisse, memoria e accessi, che porta a termine un'attività dall'inizio alla fine invece di rispondere a una domanda per volta."}
         ]
       }
     };
@@ -1043,6 +1025,11 @@
         var k = el.getAttribute('data-i18n');
         if(dict[k] != null) el.textContent = dict[k];
       });
+      // section descriptions carry an emphasised phrase, so they need real HTML
+      ['hero_lede','map_p','demo_p','how_p','final_p'].forEach(function(k){
+        var el = document.querySelector('[data-i18n="'+k+'"]');
+        if(el && dict[k] != null) el.innerHTML = dict[k];
+      });
       // planet labels + aria
       groups.forEach(function(gr,i){
         gr.querySelector('.name').textContent = dict.planets[i].n;
@@ -1068,11 +1055,6 @@
       // refresh open card
       setActive(current);
       equalizeHeight();
-      // section rail aria-labels follow the same kicker text as their visible label
-      document.querySelectorAll('.rail-dot').forEach(function(btn){
-        var lbl = btn.querySelector('.rail-label');
-        if(lbl) btn.setAttribute('aria-label', lbl.textContent);
-      });
       // toggle UI state
       document.querySelectorAll('.lang-btn').forEach(function(b){
         b.classList.toggle('active', b.getAttribute('data-lang') === lang);
@@ -1282,44 +1264,26 @@
     } else { revealDemo(); }
   })();
 
-  /* ---------- scroll progress + section rail ---------- */
+  /* ---------- scroll progress ---------- */
   (function(){
     var fill = document.getElementById('scrollProgress');
-    var dots = Array.prototype.slice.call(document.querySelectorAll('.rail-dot'));
-    var targets = dots.map(function(d){ return document.getElementById(d.getAttribute('data-target')); });
-    var reduceRail = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!fill) return;
 
     function updateProgress(){
-      if(!fill) return;
       var doc = document.documentElement;
       var max = doc.scrollHeight - doc.clientHeight;
       var pct = max > 0 ? ((doc.scrollTop || document.body.scrollTop) / max * 100) : 0;
       fill.style.width = pct + '%';
     }
-    function updateActive(){
-      var pos = window.scrollY + window.innerHeight * 0.4, active = 0;
-      targets.forEach(function(t, i){ if(t && t.offsetTop <= pos) active = i; });
-      dots.forEach(function(d, i){ d.classList.toggle('on', i === active); });
-    }
     var ticking = false;
     function onScroll(){
       if(ticking) return;
       ticking = true;
-      requestAnimationFrame(function(){ updateProgress(); updateActive(); ticking = false; });
+      requestAnimationFrame(function(){ updateProgress(); ticking = false; });
     }
     window.addEventListener('scroll', onScroll, {passive:true});
     window.addEventListener('resize', onScroll);
-
-    dots.forEach(function(d, i){
-      d.addEventListener('click', function(){
-        var t = targets[i];
-        if(!t) return;
-        t.scrollIntoView({ behavior: reduceRail ? 'auto' : 'smooth', block:'start' });
-      });
-    });
-
     updateProgress();
-    updateActive();
   })();
 </script>
 
