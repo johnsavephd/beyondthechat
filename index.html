@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Beyond the chat, AI setup for founders</title>
+<meta name="description" content="87% of companies using AI never get past the chat. I set up everything that comes after it: skills, workflows, integrations, and agents that finish real work on their own.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%2305060a'/%3E%3Cpath d='M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z' fill='%233da9ff'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://salvigiovanni.com/">
+<meta property="og:title" content="Beyond the chat, AI setup for founders">
+<meta property="og:description" content="87% of companies using AI never get past the chat. I set up everything that comes after it: skills, workflows, integrations, and agents that finish real work on their own.">
+<meta property="og:image" content="https://salvigiovanni.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Beyond the chat, AI setup for founders">
+<meta name="twitter:description" content="87% of companies using AI never get past the chat. I set up everything that comes after it: skills, workflows, integrations, and agents that finish real work on their own.">
+<meta name="twitter:image" content="https://salvigiovanni.com/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -70,6 +83,24 @@
   .lang-btn.active{color:var(--ink);}
   .lang-sep{color:var(--faint); font-family:var(--mono); font-size:.8rem;}
   @media (max-width:480px){ .nav-right{gap:12px;} }
+
+  /* scroll progress + section rail */
+  .scroll-progress{ position:absolute; left:0; right:0; bottom:0; height:2px; overflow:hidden; }
+  .scroll-progress-fill{ height:100%; width:0%;
+    background:linear-gradient(90deg,var(--accent-2),var(--accent)); transition:width .08s linear; }
+  .rail{ position:fixed; right:22px; top:50%; transform:translateY(-50%); z-index:39;
+    display:flex; flex-direction:column; gap:18px; }
+  .rail-dot{ position:relative; width:9px; height:9px; border-radius:50%; border:none; padding:0;
+    background:rgba(238,240,245,.18); cursor:pointer; transition:background .25s ease, transform .25s ease; }
+  .rail-dot:hover, .rail-dot:focus-visible{ background:var(--dim); }
+  .rail-dot.on{ background:var(--accent); transform:scale(1.35); box-shadow:0 0 10px rgba(61,169,255,.7); }
+  .rail-dot .rail-label{ position:absolute; right:20px; top:50%; transform:translateY(-50%);
+    font-family:var(--mono); font-size:.72rem; color:var(--dim); white-space:nowrap;
+    opacity:0; pointer-events:none; transition:opacity .2s ease; }
+  .rail-dot.on .rail-label, .rail-dot:hover .rail-label, .rail-dot:focus-visible .rail-label{ opacity:1; }
+  #map, #demo, #howwework, #book{ scroll-margin-top:64px; }
+  @media (max-width:900px){ .rail{ display:none; } }
+  @media (prefers-reduced-motion: reduce){ .scroll-progress-fill{ transition:none; } }
 
   /* hero */
   .hero{min-height:100vh; display:flex; flex-direction:column; justify-content:center;
@@ -154,7 +185,6 @@
     .band{ padding:78px 0; }
     .head{ margin-bottom:44px; }
     h1.title{ min-height:3.15em; }
-    #demo{ display:none; }
   }
   @media (max-width:480px){
     .nav{ padding:12px 18px; }
@@ -282,6 +312,28 @@
     .demo-left .chat-thread, .demo-right .chat-thread{ height:460px; }
   }
 
+  .demo-panel-head-right{ display:flex; align-items:center; gap:10px; }
+  .demo-replay{ font-family:var(--mono); font-size:.72rem; color:var(--dim); background:transparent;
+    border:1px solid var(--line); border-radius:999px; padding:4px 10px; cursor:pointer;
+    line-height:1.3; transition:border-color .15s ease, color .15s ease; }
+  .demo-replay:hover{ border-color:var(--accent); color:var(--accent); }
+  .demo-replay:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  /* mobile before/after (one thread at a time, swapped by a segmented control) */
+  .demo-mobile{ display:none; }
+  .demo-mobile-seg{ display:flex; gap:6px; border:1px solid var(--line); border-radius:8px;
+    padding:4px; margin-bottom:14px; }
+  .demo-mobile-seg button{ flex:1; font-family:var(--sans); font-weight:600; font-size:.82rem;
+    padding:9px 6px; border:none; border-radius:6px; background:transparent; color:var(--dim);
+    cursor:pointer; transition:background .2s ease, color .2s ease; }
+  .demo-mobile-seg button.on{ background:rgba(61,169,255,.14); color:var(--accent); }
+  .demo-mobile-seg button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  @media (max-width:640px){
+    .demo-grid{ display:none; }
+    .demo-mobile{ display:block; }
+    .demo-mobile-panel .chat-thread{ height:420px; }
+  }
+
   /* what to expect */
   .steps-grid{
     display:grid; grid-template-columns:repeat(4,1fr); gap:0; max-width:1040px; margin:0 auto;
@@ -341,7 +393,15 @@
       <a href="https://calendly.com/g-salvi-bs/get-to-know-meeting" target="_blank" rel="noopener noreferrer" class="cta" data-i18n="nav_cta">Book a call</a>
     </div>
   </div>
+  <div class="scroll-progress"><div class="scroll-progress-fill" id="scrollProgress"></div></div>
 </header>
+
+<nav class="rail" id="rail" aria-label="Section navigation">
+  <button type="button" class="rail-dot" data-target="map" aria-label="Beyond the chat"><span class="rail-label" data-i18n="map_kicker">Beyond the chat</span></button>
+  <button type="button" class="rail-dot" data-target="demo" aria-label="One request, two outcomes"><span class="rail-label" data-i18n="demo_kicker">One request, two outcomes</span></button>
+  <button type="button" class="rail-dot" data-target="howwework" aria-label="How we work"><span class="rail-label" data-i18n="how_kicker">How we work</span></button>
+  <button type="button" class="rail-dot" data-target="book" aria-label="Next step"><span class="rail-label" data-i18n="final_kicker">Next step</span></button>
+</nav>
 
 <main id="top">
 
@@ -424,7 +484,10 @@
         <div class="demo-panel demo-left">
           <div class="demo-panel-head">
             <span class="demo-label" data-i18n="demo_left_label">Without a skill</span>
-            <span class="demo-badge demo-badge-bad" id="demoLeftBadge" data-i18n="demo_left_badge">14 messages</span>
+            <div class="demo-panel-head-right">
+              <button type="button" class="demo-replay" id="demoLeftReplay" aria-label="Replay the scroll">↻ Replay</button>
+              <span class="demo-badge demo-badge-bad" id="demoLeftBadge" data-i18n="demo_left_badge">14 messages</span>
+            </div>
           </div>
           <div class="chat-thread" id="demoLeftThread"></div>
           <div class="demo-fade"></div>
@@ -436,6 +499,21 @@
             <span class="demo-badge demo-badge-good" id="demoRightBadge" data-i18n="demo_right_badge">1 message</span>
           </div>
           <div class="chat-thread" id="demoRightThread"></div>
+        </div>
+      </div>
+
+      <div class="demo-mobile" id="demoMobile">
+        <div class="demo-mobile-seg" role="tablist" aria-label="Chat comparison">
+          <button type="button" class="on" role="tab" aria-selected="true" data-variant="bad" id="demoSegBad" data-i18n="demo_left_label">Without a skill</button>
+          <button type="button" role="tab" aria-selected="false" data-variant="good" id="demoSegGood" data-i18n="demo_right_label">With a skill set up</button>
+        </div>
+        <div class="demo-panel demo-mobile-panel">
+          <div class="demo-panel-head">
+            <button type="button" class="demo-replay" id="demoMobileReplay" aria-label="Replay the scroll">↻ Replay</button>
+            <span class="demo-badge demo-badge-bad" id="demoMobileBadge" data-i18n="demo_left_badge">14 messages</span>
+          </div>
+          <div class="chat-thread" id="demoMobileThread"></div>
+          <div class="demo-fade"></div>
         </div>
       </div>
     </div>
@@ -572,6 +650,7 @@
     var c = document.getElementById('stars'), x = c.getContext('2d');
     var w, h, dpr, stars = [], mx = 0, my = 0, tx = 0, ty = 0;
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var rafId = null;
 
     function resize(){
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -588,8 +667,9 @@
           ts: Math.random()*0.02 + 0.004
         });
       }
+      paint(); // always show a correct static frame, animating or not
     }
-    function draw(){
+    function paint(){
       x.clearRect(0,0,w,h);
       tx += (mx - tx) * 0.05; ty += (my - ty) * 0.05;
       for(var i=0;i<stars.length;i++){
@@ -604,7 +684,17 @@
         x.fillStyle = s.z > 0.65 ? 'rgba(230,236,255,'+a+')' : 'rgba(255,255,255,'+(a*0.8)+')';
         x.fill();
       }
-      requestAnimationFrame(draw);
+    }
+    function loop(){
+      paint();
+      rafId = requestAnimationFrame(loop);
+    }
+    function start(){
+      if(reduce || rafId !== null || document.hidden) return;
+      rafId = requestAnimationFrame(loop);
+    }
+    function stop(){
+      if(rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
     }
     window.addEventListener('resize', resize);
     window.addEventListener('mousemove', function(e){
@@ -614,12 +704,17 @@
     window.addEventListener('deviceorientation', function(e){
       if(e.gamma!=null){ mx = Math.max(-1,Math.min(1,e.gamma/30)); my = Math.max(-1,Math.min(1,(e.beta-45)/30)); }
     });
+    document.addEventListener('visibilitychange', function(){
+      if(document.hidden){ stop(); } else { start(); }
+    });
     resize();
-    if(reduce){ draw(); } else { draw(); }
+    start();
   })();
 
   /* ---------- capability planets + i18n ---------- */
   (function(){
+    var mobileVariant = 'bad'; // which side of the before/after demo the mobile view shows
+
     // language-independent visual properties
     var vis = [
       {r:12, ring:false, light:'#dfe3ec', mid:'#8f95a6', dark:'#4a4f5e'},
@@ -973,6 +1068,11 @@
       // refresh open card
       setActive(current);
       equalizeHeight();
+      // section rail aria-labels follow the same kicker text as their visible label
+      document.querySelectorAll('.rail-dot').forEach(function(btn){
+        var lbl = btn.querySelector('.rail-label');
+        if(lbl) btn.setAttribute('aria-label', lbl.textContent);
+      });
       // toggle UI state
       document.querySelectorAll('.lang-btn').forEach(function(b){
         b.classList.toggle('active', b.getAttribute('data-lang') === lang);
@@ -1034,8 +1134,22 @@
       if(!leftHost || !rightHost) return;
       renderThread(leftHost, dict.demo_left, dict);
       renderThread(rightHost, dict.demo_right, dict);
+      buildMobileDemo(dict);
       demoRevealed = false; // allow re-triggering the stagger after a language switch
       maybeRevealDemo();
+    }
+    function buildMobileDemo(dict){
+      var host = document.getElementById('demoMobileThread');
+      if(!host) return;
+      renderThread(host, mobileVariant === 'good' ? dict.demo_right : dict.demo_left, dict);
+      updateMobileBadge(dict);
+    }
+    function updateMobileBadge(dict){
+      var badge = document.getElementById('demoMobileBadge');
+      if(!badge) return;
+      var good = mobileVariant === 'good';
+      badge.textContent = good ? dict.demo_right_badge : dict.demo_left_badge;
+      badge.className = 'demo-badge ' + (good ? 'demo-badge-good' : 'demo-badge-bad');
     }
     function renderThread(host, messages, dict){
       host.innerHTML = '';
@@ -1097,14 +1211,22 @@
     }
     function revealDemo(){
       demoRevealed = true;
-      var all = document.querySelectorAll('#demo .msg');
+      // only stagger messages that are actually on screen (desktop panels vs.
+      // the mobile single-thread view are never both visible at once)
+      var all = Array.prototype.filter.call(document.querySelectorAll('#demo .msg'), function(el){
+        return el.offsetParent !== null;
+      });
       all.forEach(function(el, i){
         setTimeout(function(){ el.classList.add('in'); }, i*90);
       });
+      var totalDelay = all.length*90 + 500;
       var leftHost = document.getElementById('demoLeftThread');
       if(leftHost){
-        var totalDelay = all.length*90 + 500;
         setTimeout(function(){ autoScrollThread(leftHost); }, totalDelay);
+      }
+      var mobileHost = document.getElementById('demoMobileThread');
+      if(mobileHost && mobileVariant === 'bad'){
+        setTimeout(function(){ autoScrollThread(mobileHost); }, totalDelay);
       }
     }
     var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1122,6 +1244,33 @@
       }
       requestAnimationFrame(step);
     }
+    function scrollThreadIntoPlace(el){
+      if(!el) return;
+      var target = el.scrollHeight - el.clientHeight;
+      if(target <= 0) return;
+      if(reduceMotion){ el.scrollTop = target; return; }
+      el.scrollTop = 0;
+      autoScrollThread(el);
+    }
+    function setMobileVariant(v){
+      if(mobileVariant === v) return;
+      mobileVariant = v;
+      var segBad = document.getElementById('demoSegBad');
+      var segGood = document.getElementById('demoSegGood');
+      if(segBad){ segBad.classList.toggle('on', v === 'bad'); segBad.setAttribute('aria-selected', v === 'bad' ? 'true' : 'false'); }
+      if(segGood){ segGood.classList.toggle('on', v === 'good'); segGood.setAttribute('aria-selected', v === 'good' ? 'true' : 'false'); }
+      buildMobileDemo(T[lang]);
+      var host = document.getElementById('demoMobileThread');
+      if(host){ host.querySelectorAll('.msg').forEach(function(m){ m.classList.add('in'); }); }
+    }
+    var segBadBtn = document.getElementById('demoSegBad');
+    var segGoodBtn = document.getElementById('demoSegGood');
+    if(segBadBtn) segBadBtn.addEventListener('click', function(){ setMobileVariant('bad'); });
+    if(segGoodBtn) segGoodBtn.addEventListener('click', function(){ setMobileVariant('good'); });
+    var leftReplayBtn = document.getElementById('demoLeftReplay');
+    if(leftReplayBtn) leftReplayBtn.addEventListener('click', function(){ scrollThreadIntoPlace(document.getElementById('demoLeftThread')); });
+    var mobileReplayBtn = document.getElementById('demoMobileReplay');
+    if(mobileReplayBtn) mobileReplayBtn.addEventListener('click', function(){ if(mobileVariant === 'bad') scrollThreadIntoPlace(document.getElementById('demoMobileThread')); });
     if('IntersectionObserver' in window){
       var demoEl = document.getElementById('demo');
       if(demoEl){
@@ -1131,6 +1280,46 @@
         demoObs.observe(demoEl);
       }
     } else { revealDemo(); }
+  })();
+
+  /* ---------- scroll progress + section rail ---------- */
+  (function(){
+    var fill = document.getElementById('scrollProgress');
+    var dots = Array.prototype.slice.call(document.querySelectorAll('.rail-dot'));
+    var targets = dots.map(function(d){ return document.getElementById(d.getAttribute('data-target')); });
+    var reduceRail = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function updateProgress(){
+      if(!fill) return;
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? ((doc.scrollTop || document.body.scrollTop) / max * 100) : 0;
+      fill.style.width = pct + '%';
+    }
+    function updateActive(){
+      var pos = window.scrollY + window.innerHeight * 0.4, active = 0;
+      targets.forEach(function(t, i){ if(t && t.offsetTop <= pos) active = i; });
+      dots.forEach(function(d, i){ d.classList.toggle('on', i === active); });
+    }
+    var ticking = false;
+    function onScroll(){
+      if(ticking) return;
+      ticking = true;
+      requestAnimationFrame(function(){ updateProgress(); updateActive(); ticking = false; });
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll);
+
+    dots.forEach(function(d, i){
+      d.addEventListener('click', function(){
+        var t = targets[i];
+        if(!t) return;
+        t.scrollIntoView({ behavior: reduceRail ? 'auto' : 'smooth', block:'start' });
+      });
+    });
+
+    updateProgress();
+    updateActive();
   })();
 </script>
 
