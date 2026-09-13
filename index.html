@@ -132,8 +132,8 @@
   .planet .halo{fill:none; stroke:var(--accent); stroke-width:1.5; opacity:0;
     transition:opacity .35s ease, r .35s ease;}
   .planet.on .halo{opacity:.55;}
-  .planet .body{ transition:filter .3s ease; }
-  .planet:hover .body, .planet.on .body{ filter:brightness(1.15) drop-shadow(0 0 10px rgba(255,255,255,.18)); }
+  .planet .body{ transition:filter .35s ease; }
+  .planet:hover .body, .planet.on .body{ filter:brightness(1.14) drop-shadow(0 0 12px rgba(160,190,255,.30)); }
   .planet .num{font-family:var(--mono); font-size:11px; fill:var(--faint); transition:fill .25s ease;}
   .planet.on .num, .planet:hover .num{fill:var(--ink);}
   .planet .name{font-family:var(--sans); font-weight:600; font-size:13px; fill:var(--dim); transition:fill .25s ease;}
@@ -405,7 +405,7 @@
               <stop offset=".5" stop-color="#5c7cfa"/>
               <stop offset="1" stop-color="#3b5bdb"/>
             </linearGradient>
-            <!-- per-planet gradients injected by JS -->
+            <!-- planet gradients/filters live in a shared defs block built by JS -->
             <g id="grads"></g>
           </defs>
           <!-- productivity axis -->
@@ -720,17 +720,42 @@
   (function(){
     var mobileVariant = 'bad'; // which side of the before/after demo the mobile view shows
 
-    // language-independent visual properties
+    // language-independent visual properties.
+    // Every planet is authored in a canonical space: sphere centred on 0,0 with
+    // radius 100, lit from the upper left. `r` is the on-curve radius in px.
     var vis = [
-      {r:12, ring:false, light:'#dfe3ec', mid:'#8f95a6', dark:'#4a4f5e'},
-      {r:15, ring:false, light:'#f0e2cf', mid:'#c9a878', dark:'#6f5334'},
-      {r:18, ring:false, light:'#ffe1c4', mid:'#e79a55', dark:'#8a5220'},
-      {r:20, ring:true,  light:'#e6d5ff', mid:'#9a78d8', dark:'#4a2f7a'},
-      {r:23, ring:false, light:'#c9f4e4', mid:'#57bd9c', dark:'#245c49'},
-      {r:27, ring:false, light:'#cfe0ff', mid:'#6f97e6', dark:'#2f4c8f'},
-      {r:33, ring:false, glow:true, light:'#e0e4fb', mid:'#3b5bdb', dark:'#14225c'}
+      // 01 - barren cratered moon: dark rock, no atmosphere, hard terminator
+      {r:13, light:'#969cab', mid:'#4d525f', dark:'#111319',
+       tex:{bf:'0.013', oct:4, seed:11, k:1.5, bf2:'0.045', oct2:2, k2:0.5}},
+      // 02 - dusty ochre rock, thin haze
+      {r:16, light:'#e9d2ac', mid:'#a8814f', dark:'#3d2814',
+       tex:{bf:'0.014', oct:3, seed:23, k:1.2, bf2:'0.042', oct2:2, k2:0.5},
+       atmo:'#f0cd96', atmoA:.14},
+      // 03 - rust world in the middle of a dust storm
+      {r:19, light:'#f6c68e', mid:'#c2702f', dark:'#4f240b',
+       tex:{bf:'0.006 0.026', oct:3, seed:5, k:1.25, bf2:'0.02 0.06', oct2:2, k2:0.45},
+       atmo:'#ffab5e', atmoA:.18},
+      // 04 - ringed gas giant
+      {r:22, ring:true, light:'#ddc9f7', mid:'#8265c6', dark:'#241247',
+       tex:{bf:'0.003 0.03', oct:3, seed:31, k:1.05, bf2:'0.01 0.09', oct2:2, k2:0.35},
+       atmo:'#c9aeff', atmoA:.16},
+      // 05 - living ocean world with weather
+      {r:25, light:'#b9ecd8', mid:'#2d8a71', dark:'#072b25',
+       tex:{bf:'0.012', oct:4, seed:7, k:1.5, bf2:'0.038', oct2:2, k2:0.32,
+            cloud:{bf:'0.009 0.016', oct:4, seed:19, a:'0 0 0 0.12 0.6 0.95 1'}},
+       atmo:'#7fe6c8', atmoA:.24, spec:.36},
+      // 06 - banded blue giant with a storm eye
+      {r:29, light:'#cfe0ff', mid:'#3f68c9', dark:'#0d1e4d',
+       tex:{bf:'0.0025 0.028', oct:3, seed:41, k:1.2, bf2:'0.008 0.08', oct2:2, k2:0.35,
+            cloud:{bf:'0.004 0.022', oct:3, seed:3, a:'0 0 0 0.04 0.26 0.62'}},
+       atmo:'#9dc0ff', atmoA:.24, storm:true},
+      // 07 - the destination: radiant super-earth, huge corona
+      {r:34, glow:true, light:'#cfe1ff', mid:'#2c53cf', dark:'#03102f',
+       tex:{bf:'0.011 0.015', oct:4, seed:59, k:1.75, bf2:'0.035', oct2:3, k2:0.45,
+            cloud:{bf:'0.008 0.013', oct:5, seed:73, a:'0 0 0 0.14 0.66 0.98 1'}},
+       atmo:'#8fb4ff', atmoA:.38, spec:.5}
     ];
-    var pts = [[70,290],[200,272],[330,248],[470,210],[600,166],[740,108],[910,46]];
+    var pts = [[70,290],[200,272],[330,248],[470,210],[600,166],[740,108],[906,48]];
 
     var T = {
       en:{
@@ -899,18 +924,207 @@
     var current = 0;   // selected planet index
     var lang = 'en';
 
-    // gradient defs (colour is language-independent)
-    var gradMarkup = '';
+    // ---- shared planet defs -------------------------------------------------
+    // One hidden <svg> holds every gradient / filter / clip used by the
+    // planets, so the curve, the detail card and the mobile stack all paint
+    // from the same source instead of re-declaring gradients per instance.
+    var GLOW_R = 152;        // corona radius of the final planet
+    var ATMO_R = 124;        // halo radius of every other planet with an atmosphere
+    var RING_RX = 205;       // outermost ring radius
+    var RING_K  = 0.27;      // ring ellipse ry/rx -> apparent tilt
+
+    function ringPath(ro, ri){
+      var ko = (ro*RING_K).toFixed(2), ki = (ri*RING_K).toFixed(2);
+      return 'M'+(-ro)+',0 A'+ro+','+ko+' 0 1,0 '+ro+',0 A'+ro+','+ko+' 0 1,0 '+(-ro)+',0 Z'+
+             'M'+(-ri)+',0 A'+ri+','+ki+' 0 1,0 '+ri+',0 A'+ri+','+ki+' 0 1,0 '+(-ri)+',0 Z';
+    }
+
+    // surface texture: fractal noise overlaid on the albedo, optionally with a
+    // second, softer noise layer standing in for cloud decks. Everything is
+    // composited back into the sphere's own alpha so nothing bleeds past the limb.
+    function texFilter(id, t){
+      var k = t.k, ic = (0.5 - 0.5*k).toFixed(4);
+      var f = '<filter id="'+id+'" x="-12%" y="-12%" width="124%" height="124%" '+
+              'color-interpolation-filters="sRGB">'+
+        '<feTurbulence type="fractalNoise" baseFrequency="'+t.bf+'" numOctaves="'+t.oct+'" seed="'+t.seed+'" result="n"/>'+
+        '<feColorMatrix in="n" type="saturate" values="0" result="g"/>'+
+        '<feComponentTransfer in="g" result="grey">'+
+          '<feFuncR type="linear" slope="'+k+'" intercept="'+ic+'"/>'+
+          '<feFuncG type="linear" slope="'+k+'" intercept="'+ic+'"/>'+
+          '<feFuncB type="linear" slope="'+k+'" intercept="'+ic+'"/>'+
+          '<feFuncA type="table" tableValues="1 1"/>'+
+        '</feComponentTransfer>'+
+        '<feBlend in="grey" in2="SourceGraphic" mode="overlay" result="surf"/>';
+      // a finer second octave keeps the large features from looking like paint
+      if(t.bf2){
+        var k2 = t.k2, ic2 = (0.5 - 0.5*k2).toFixed(4);
+        f +=
+        '<feTurbulence type="fractalNoise" baseFrequency="'+t.bf2+'" numOctaves="'+(t.oct2||2)+'" seed="'+(t.seed+5)+'" result="n2"/>'+
+        '<feColorMatrix in="n2" type="saturate" values="0" result="g2"/>'+
+        '<feComponentTransfer in="g2" result="grain">'+
+          '<feFuncR type="linear" slope="'+k2+'" intercept="'+ic2+'"/>'+
+          '<feFuncG type="linear" slope="'+k2+'" intercept="'+ic2+'"/>'+
+          '<feFuncB type="linear" slope="'+k2+'" intercept="'+ic2+'"/>'+
+          '<feFuncA type="table" tableValues="1 1"/>'+
+        '</feComponentTransfer>'+
+        '<feBlend in="grain" in2="surf" mode="overlay" result="surf"/>';
+      }
+      if(t.cloud){
+        var c = t.cloud;
+        f +=
+        '<feTurbulence type="fractalNoise" baseFrequency="'+c.bf+'" numOctaves="'+c.oct+'" seed="'+c.seed+'" result="cn"/>'+
+        '<feColorMatrix in="cn" type="matrix" result="cw" values="'+
+          '0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0.34 0.34 0.32 0 0"/>'+
+        '<feComponentTransfer in="cw" result="clouds">'+
+          '<feFuncA type="table" tableValues="'+c.a+'"/>'+
+        '</feComponentTransfer>'+
+        '<feComposite in="clouds" in2="surf" operator="over" result="surf"/>';
+      }
+      f += '<feComposite in="surf" in2="SourceGraphic" operator="in"/></filter>';
+      return f;
+    }
+
+    var defsMarkup =
+      // limb darkening - the disc loses light towards its edge on every side
+      '<radialGradient id="pl_limb" cx=".5" cy=".5" r=".5">'+
+        '<stop offset="0" stop-color="#000" stop-opacity="0"/>'+
+        '<stop offset=".58" stop-color="#000" stop-opacity="0"/>'+
+        '<stop offset=".85" stop-color="#000" stop-opacity=".26"/>'+
+        '<stop offset="1" stop-color="#000" stop-opacity=".66"/>'+
+      '</radialGradient>'+
+      // terminator - day/night falloff, sun sitting up and to the left
+      '<radialGradient id="pl_term" cx=".26" cy=".20" r=".96">'+
+        '<stop offset="0" stop-color="#05070f" stop-opacity="0"/>'+
+        '<stop offset=".30" stop-color="#05070f" stop-opacity=".04"/>'+
+        '<stop offset=".52" stop-color="#04060d" stop-opacity=".30"/>'+
+        '<stop offset=".72" stop-color="#03050b" stop-opacity=".74"/>'+
+        '<stop offset=".88" stop-color="#020409" stop-opacity=".93"/>'+
+        '<stop offset="1" stop-color="#010307" stop-opacity=".97"/>'+
+      '</radialGradient>'+
+      // hard terminator for the airless body
+      '<radialGradient id="pl_termHard" cx=".26" cy=".20" r=".96">'+
+        '<stop offset="0" stop-color="#05070f" stop-opacity="0"/>'+
+        '<stop offset=".38" stop-color="#05070f" stop-opacity=".03"/>'+
+        '<stop offset=".58" stop-color="#03050b" stop-opacity=".42"/>'+
+        '<stop offset=".74" stop-color="#020409" stop-opacity=".92"/>'+
+        '<stop offset="1" stop-color="#010306" stop-opacity=".99"/>'+
+      '</radialGradient>'+
+      // sub-solar brightening: the point facing the light reads hotter
+      '<radialGradient id="pl_sun" cx=".32" cy=".26" r=".56">'+
+        '<stop offset="0" stop-color="#fff" stop-opacity=".13"/>'+
+        '<stop offset=".45" stop-color="#fff" stop-opacity=".045"/>'+
+        '<stop offset="1" stop-color="#fff" stop-opacity="0"/>'+
+      '</radialGradient>'+
+      // specular sheen for worlds with oceans / ice
+      '<radialGradient id="pl_spec" cx=".5" cy=".5" r=".5">'+
+        '<stop offset="0" stop-color="#fff" stop-opacity=".55"/>'+
+        '<stop offset=".55" stop-color="#fff" stop-opacity=".12"/>'+
+        '<stop offset="1" stop-color="#fff" stop-opacity="0"/>'+
+      '</radialGradient>'+
+      // rings pick up the same lighting as the sphere, and the planet throws a
+      // shadow across them on the anti-solar side
+      '<filter id="pl_ringBlur" x="-60%" y="-60%" width="220%" height="220%">'+
+        '<feGaussianBlur stdDeviation="16"/></filter>'+
+      '<radialGradient id="pl_ringLitG" gradientUnits="userSpaceOnUse" cx="-80" cy="-95" r="340">'+
+        '<stop offset="0" stop-color="#fff"/>'+
+        '<stop offset=".5" stop-color="#d2d2d2"/>'+
+        '<stop offset="1" stop-color="#3d3d3d"/>'+
+      '</radialGradient>'+
+      '<mask id="pl_ringMask" maskUnits="userSpaceOnUse" x="-260" y="-260" width="520" height="520">'+
+        '<rect x="-260" y="-260" width="520" height="520" fill="url(#pl_ringLitG)"/>'+
+        '<ellipse cx="150" cy="150" rx="86" ry="190" transform="rotate(-45 150 150)" '+
+          'fill="#000" opacity=".92" filter="url(#pl_ringBlur)"/>'+
+      '</mask>'+
+      '<clipPath id="pl_ringBack" clipPathUnits="userSpaceOnUse">'+
+        '<rect x="-260" y="-150" width="520" height="150"/></clipPath>'+
+      '<clipPath id="pl_ringFront" clipPathUnits="userSpaceOnUse">'+
+        '<rect x="-260" y="0" width="520" height="150"/></clipPath>';
+
     vis.forEach(function(d,i){
-      gradMarkup +=
-        '<radialGradient id="pg'+i+'" cx="0.35" cy="0.32" r="0.75">'+
+      var p = 'pl'+i;
+      // albedo: a gentle light-to-dark ramp; the real shading is layered on top
+      defsMarkup +=
+        '<radialGradient id="'+p+'_base" cx=".36" cy=".30" r=".95">'+
           '<stop offset="0" stop-color="'+d.light+'"/>'+
-          '<stop offset="0.45" stop-color="'+d.mid+'"/>'+
+          '<stop offset=".22" stop-color="'+d.light+'"/>'+
+          '<stop offset=".55" stop-color="'+d.mid+'"/>'+
           '<stop offset="1" stop-color="'+d.dark+'"/>'+
-        '</radialGradient>';
+        '</radialGradient>'+
+        texFilter(p+'_tex', d.tex);
+
+      if(d.atmo){
+        var edge = (100/(d.glow ? GLOW_R : ATMO_R));
+        defsMarkup +=
+          // scattering halo standing off the limb
+          '<radialGradient id="'+p+'_atmo" cx=".5" cy=".5" r=".5">'+
+            '<stop offset="0" stop-color="'+d.atmo+'" stop-opacity="0"/>'+
+            '<stop offset="'+(edge*0.97).toFixed(3)+'" stop-color="'+d.atmo+'" stop-opacity="0"/>'+
+            '<stop offset="'+edge.toFixed(3)+'" stop-color="'+d.atmo+'" stop-opacity="'+d.atmoA+'"/>'+
+            '<stop offset="'+Math.min(1,(edge+(1-edge)*0.45)).toFixed(3)+'" stop-color="'+d.atmo+'" stop-opacity="'+(d.atmoA*0.28).toFixed(3)+'"/>'+
+            '<stop offset="1" stop-color="'+d.atmo+'" stop-opacity="0"/>'+
+          '</radialGradient>'+
+          // rim light sitting just inside the limb
+          '<radialGradient id="'+p+'_rim" cx=".5" cy=".5" r=".5">'+
+            '<stop offset=".80" stop-color="'+d.atmo+'" stop-opacity="0"/>'+
+            '<stop offset=".955" stop-color="'+d.atmo+'" stop-opacity="'+(d.glow?.85:.6)+'"/>'+
+            '<stop offset="1" stop-color="'+d.atmo+'" stop-opacity="'+(d.glow?.45:.22)+'"/>'+
+          '</radialGradient>';
+      }
+
+      if(d.ring){
+        defsMarkup +=
+          '<linearGradient id="'+p+'_ring" x1="0" y1="0" x2="1" y2="0">'+
+            '<stop offset="0" stop-color="'+d.mid+'" stop-opacity=".22"/>'+
+            '<stop offset=".26" stop-color="#f6f1ff" stop-opacity=".92"/>'+
+            '<stop offset=".58" stop-color="'+d.light+'" stop-opacity=".62"/>'+
+            '<stop offset="1" stop-color="'+d.mid+'" stop-opacity=".30"/>'+
+          '</linearGradient>';
+      }
     });
-    gradsHost.insertAdjacentHTML('beforebegin', gradMarkup);
+
+    var defsHost = document.createElementNS(svgns,'svg');
+    defsHost.setAttribute('width','0'); defsHost.setAttribute('height','0');
+    defsHost.setAttribute('aria-hidden','true');
+    defsHost.setAttribute('style','position:absolute;width:0;height:0;overflow:hidden');
+    defsHost.innerHTML = '<defs>'+defsMarkup+'</defs>';
+    document.body.appendChild(defsHost);
     gradsHost.remove();
+
+    // the whole planet, authored around 0,0 at radius 100
+    function planetBody(i, d){
+      var p = 'pl'+i, m = '';
+      if(d.ring){
+        m += '<g mask="url(#pl_ringMask)"><g transform="rotate(-22)">'+
+             '<g clip-path="url(#pl_ringBack)">'+ ringSystem(p) +'</g></g></g>';
+      }
+      if(d.atmo){
+        var ar = d.glow ? GLOW_R : ATMO_R;
+        m += '<circle r="'+ar+'" fill="url(#'+p+'_atmo)"/>';
+      }
+      m += '<circle r="100" fill="url(#'+p+'_base)" filter="url(#'+p+'_tex)"/>';
+      if(d.atmo){ m += '<circle r="100" fill="url(#pl_sun)"/>'; }
+      if(d.storm){
+        m += '<ellipse cx="-26" cy="18" rx="30" ry="15" fill="'+d.light+'" opacity=".22" transform="rotate(-6 -26 18)"/>'+
+             '<ellipse cx="-26" cy="18" rx="15" ry="7" fill="'+d.light+'" opacity=".30" transform="rotate(-6 -26 18)"/>';
+      }
+      m += '<circle r="100" fill="url(#pl_limb)"/>';
+      if(d.atmo){ m += '<circle r="100" fill="url(#'+p+'_rim)"/>'; }
+      m += '<circle r="100" fill="url(#'+(d.atmo ? 'pl_term' : 'pl_termHard')+')"/>';
+      if(d.spec){
+        m += '<ellipse cx="-40" cy="-44" rx="30" ry="23" fill="url(#pl_spec)" opacity="'+d.spec+'" transform="rotate(-28 -40 -44)"/>';
+      }
+      if(d.ring){
+        m += '<g mask="url(#pl_ringMask)"><g transform="rotate(-22)">'+
+             '<g clip-path="url(#pl_ringFront)">'+ ringSystem(p) +'</g></g></g>';
+      }
+      return m;
+    }
+
+    function ringSystem(p){
+      return '<path d="'+ringPath(RING_RX,176)+'" fill="url(#'+p+'_ring)" fill-rule="evenodd" opacity=".55"/>'+
+             '<path d="'+ringPath(170,132)+'" fill="url(#'+p+'_ring)" fill-rule="evenodd" opacity=".85"/>'+
+             '<path d="'+ringPath(130,118)+'" fill="url(#'+p+'_ring)" fill-rule="evenodd" opacity=".38"/>';
+    }
 
     var groups = [];
     var stackItems = [];
@@ -921,20 +1135,12 @@
       grp.setAttribute('class','planet'); grp.setAttribute('tabindex','0');
       grp.setAttribute('role','button');
 
-      var ring = d.ring
-        ? '<ellipse cx="'+px+'" cy="'+py+'" rx="'+(r*1.9)+'" ry="'+(r*0.55)+'" fill="none" stroke="'+d.light+'" stroke-width="2.5" opacity="0.55" transform="rotate(-24 '+px+' '+py+')"/>'
-        : '';
-      var glow = d.glow
-        ? '<circle cx="'+px+'" cy="'+py+'" r="'+(r+16)+'" fill="'+d.mid+'" opacity="0.14"/>'
-        : '';
-
       grp.innerHTML =
         '<g class="float">'+
-          glow +
-          '<circle class="halo" cx="'+px+'" cy="'+py+'" r="'+(r+11)+'"></circle>'+
-          ring +
-          '<circle class="body" cx="'+px+'" cy="'+py+'" r="'+r+'" fill="url(#pg'+i+')" stroke="rgba(255,255,255,.12)" stroke-width="1"/>'+
-          '<path d="M '+px+' '+(py-r)+' A '+r+' '+r+' 0 0 1 '+px+' '+(py+r)+' A '+(r*0.7)+' '+r+' 0 0 0 '+px+' '+(py-r)+' Z" fill="#000" opacity="0.22"/>'+
+          '<g transform="translate('+px+' '+py+')">'+
+            '<circle class="halo" r="'+(r+11)+'"></circle>'+
+            '<g class="body" transform="scale('+(r/100)+')">'+ planetBody(i, d) +'</g>'+
+          '</g>'+
           '<text class="num" x="'+px+'" y="'+(py-r-10)+'" text-anchor="middle">0'+(i+1)+'</text>'+
           '<text class="name" x="'+px+'" y="'+(py+r+22)+'" text-anchor="middle"></text>'+
         '</g>';
@@ -961,25 +1167,15 @@
       stackItems.push(item);
     });
 
+    // Standalone render of one planet, sized to fill its box. The ringed and
+    // haloed bodies are pulled in a little so their rings / coronae stay inside
+    // the frame instead of being clipped.
     function cardPlanet(d, gid){
-      var id = 'cpg_'+gid;
-      var cx=58, cy=58, r=36;
-      var ring = d.ring
-        ? '<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+(r*1.9)+'" ry="'+(r*0.55)+'" fill="none" stroke="'+d.light+'" stroke-width="3" opacity="0.55" transform="rotate(-24 '+cx+' '+cy+')"/>'
-        : '';
-      var glow = d.glow
-        ? '<circle cx="'+cx+'" cy="'+cy+'" r="'+(r+16)+'" fill="'+d.mid+'" opacity="0.16"/>'
-        : '';
-      return '<svg viewBox="0 0 116 116" width="100%" height="100%">'+
-        '<defs><radialGradient id="'+id+'" cx="0.35" cy="0.32" r="0.75">'+
-          '<stop offset="0" stop-color="'+d.light+'"/>'+
-          '<stop offset="0.45" stop-color="'+d.mid+'"/>'+
-          '<stop offset="1" stop-color="'+d.dark+'"/>'+
-        '</radialGradient></defs>'+
-        '<g class="cardplanet">'+ glow + ring +
-          '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="url(#'+id+')" stroke="rgba(255,255,255,.14)" stroke-width="1"/>'+
-          '<path d="M '+cx+' '+(cy-r)+' A '+r+' '+r+' 0 0 1 '+cx+' '+(cy+r)+' A '+(r*0.7)+' '+r+' 0 0 0 '+cx+' '+(cy-r)+' Z" fill="#000" opacity="0.22"/>'+
-        '</g></svg>';
+      var i = vis.indexOf(d);
+      var s = d.ring ? 0.62 : (d.glow ? 0.84 : 1);
+      return '<svg viewBox="-126 -126 252 252" width="100%" height="100%">'+
+        '<g class="cardplanet"><g transform="scale('+s+')">'+ planetBody(i, d) +'</g></g>'+
+      '</svg>';
     }
 
     function setActive(i){
