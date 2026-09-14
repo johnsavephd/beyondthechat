@@ -342,6 +342,31 @@
     .traj-line{transition:none; stroke-dashoffset:0;}
     .hint .drift{animation:none;}
   }
+
+  /* cookie notice */
+  .cookie-banner{
+    position:fixed; left:20px; right:20px; bottom:20px; z-index:60;
+    max-width:640px; margin:0 auto;
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+    background:rgba(10,10,11,.92); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border:1px solid var(--line); border-radius:14px; padding:16px 20px;
+    box-shadow:0 12px 40px rgba(0,0,0,.4);
+    transform:translateY(140%); opacity:0; transition:transform .35s ease, opacity .35s ease;
+    pointer-events:none;
+  }
+  .cookie-banner.show{ transform:translateY(0); opacity:1; pointer-events:auto; }
+  .cookie-text{ flex:1 1 260px; font-size:.86rem; line-height:1.55; color:var(--dim); margin:0; }
+  .cookie-text a{ color:var(--ink); text-decoration:underline; text-underline-offset:2px; }
+  .cookie-actions{ display:flex; align-items:center; gap:14px; flex:none; }
+  .cookie-accept{
+    font-family:var(--sans); font-weight:600; font-size:.85rem; padding:9px 18px;
+    border-radius:999px; border:none; cursor:pointer; background:var(--accent); color:var(--bg);
+    transition:background .18s ease;
+  }
+  .cookie-accept:hover{ background:var(--accent-2); }
+  @media (max-width:480px){
+    .cookie-banner{ left:12px; right:12px; bottom:12px; padding:14px 16px; }
+  }
 </style>
 </head>
 <body>
@@ -551,6 +576,7 @@
     <div class="foot">
       <span data-i18n="footer">beyond, AI setup for non-technical executives</span>
       <div class="foot-right">
+        <a href="/privacy.html" class="foot-link" data-i18n="footer_privacy">Privacy</a>
         <a href="mailto:btc@salvigiovanni.com" class="foot-link">btc@salvigiovanni.com</a>
         <a href="https://www.linkedin.com/in/giovanni-s-5aa278158/" target="_blank" rel="noopener noreferrer" class="foot-link">by Giovanni Salvi</a>
         <span>© 2026</span>
@@ -558,6 +584,30 @@
     </div>
   </div>
 </footer>
+
+<div class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Cookie notice">
+  <p class="cookie-text" data-i18n="cookie_text">This site uses only essential local storage (to remember your language). No tracking or advertising cookies are set. <a href="/privacy.html#cookies">Learn more</a></p>
+  <div class="cookie-actions">
+    <button type="button" class="cookie-accept" id="cookieAccept" data-i18n="cookie_accept">Got it</button>
+  </div>
+</div>
+
+<script>
+  /* ---------- cookie notice ---------- */
+  (function(){
+    var KEY = 'beyond_cookie_ack';
+    var banner = document.getElementById('cookieBanner');
+    var btn = document.getElementById('cookieAccept');
+    if(!banner || !btn) return;
+    var acked = false;
+    try{ acked = localStorage.getItem(KEY) === '1'; }catch(e){}
+    if(!acked){ requestAnimationFrame(function(){ banner.classList.add('show'); }); }
+    btn.addEventListener('click', function(){
+      banner.classList.remove('show');
+      try{ localStorage.setItem(KEY, '1'); }catch(e){}
+    });
+  })();
+</script>
 
 <script>
   /* ---------- hero title typewriter ---------- */
@@ -789,6 +839,9 @@
         final_p:"A 30-minute call to see what you're already using today, and exactly what's worth setting up first.",
         final_cta:"Book a call",
         footer:"beyond, AI setup for non-technical executives",
+        footer_privacy:"Privacy",
+        cookie_text:"This site uses only essential local storage (to remember your language). No tracking or advertising cookies are set. <a href=\"/privacy.html#cookies\">Learn more</a>",
+        cookie_accept:"Got it",
         productivity:"Productivity",
         prod_high:"High", prod_med:"Medium",
         planetWord:"level",
@@ -868,6 +921,9 @@
         final_p:"Mezz'ora insieme per capire cosa usi già oggi, e da dove conviene davvero partire prima.",
         final_cta:"Prenota una call",
         footer:"beyond, AI per manager non tecnici",
+        footer_privacy:"Privacy",
+        cookie_text:"Questo sito usa solo local storage essenziale (per ricordare la lingua). Nessun cookie di tracciamento o pubblicitario. <a href=\"/privacy.html#cookies\">Scopri di più</a>",
+        cookie_accept:"Ho capito",
         productivity:"Produttività",
         prod_high:"Alta", prod_med:"Media",
         planetWord:"livello",
@@ -999,7 +1055,7 @@
         if(dict[k] != null) el.textContent = dict[k];
       });
       // section descriptions (and the hero title's mobile break) carry real HTML
-      ['hero_title_prefix','hero_lede','map_p','demo_p','how_p','final_p'].forEach(function(k){
+      ['hero_title_prefix','hero_lede','map_p','demo_p','how_p','final_p','cookie_text'].forEach(function(k){
         var el = document.querySelector('[data-i18n="'+k+'"]');
         if(el && dict[k] != null) el.innerHTML = dict[k];
       });
