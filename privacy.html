@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Beyond</title>
+<meta name="description" content="Privacy policy and cookie information for beyond, AI setup for non-technical executives.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%2305060a'/%3E%3Cpath d='M12 3l2.1 6.9L21 12l-6.9 2.1L12 21l-2.1-6.9L3 12l6.9-2.1z' fill='%23ffffff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0b;
+    --ink:#f2f1ee;
+    --dim:#a3a29d;
+    --faint:#5c5b57;
+    --accent:#ffffff;
+    --accent-2:#c7c4ba;
+    --line:rgba(242,241,238,.12);
+    --line-soft:rgba(242,241,238,.06);
+    --display:"Instrument Sans", "Inter", -apple-system, sans-serif;
+    --sans:"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+    --max:760px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 28px;}
+  @media (max-width:640px){ .wrap{padding:0 20px;} }
+  h1,h2{font-family:var(--display); font-weight:600; letter-spacing:-.02em; line-height:1.15;}
+
+  header{position:sticky; top:0; z-index:40; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    background:rgba(10,10,11,.55); border-bottom:1px solid var(--line-soft);}
+  .nav{display:flex; align-items:center; justify-content:space-between; max-width:1120px;
+    margin:0 auto; padding:15px 28px;}
+  @media (max-width:640px){ .nav{padding:12px 18px;} }
+  .brand{display:flex; align-items:center; gap:9px; font-family:var(--display); font-weight:600; font-size:1.1rem; text-decoration:none;}
+  .brand svg{width:16px; height:16px;}
+  .back{font-family:var(--mono); font-size:.8rem; color:var(--faint); text-decoration:none; transition:color .15s ease;}
+  .back:hover{color:var(--accent);}
+
+  main{padding:64px 0 100px;}
+  .kicker{font-family:var(--mono); font-size:.78rem; color:var(--accent-2); display:block; margin-bottom:16px;}
+  h1{font-size:clamp(2rem, 5vw, 2.6rem); margin:0 0 8px;}
+  .updated{font-family:var(--mono); font-size:.8rem; color:var(--faint); margin:0 0 56px;}
+
+  section{margin-bottom:40px;}
+  h2{font-size:1.25rem; margin:0 0 14px;}
+  p{color:var(--dim); font-size:1rem; line-height:1.7; margin:0 0 14px;}
+  p:last-child{margin-bottom:0;}
+  ul{margin:0 0 14px; padding-left:20px; color:var(--dim); font-size:1rem; line-height:1.7;}
+  li{margin-bottom:6px;}
+  strong{color:var(--ink); font-weight:600;}
+  a.link{color:var(--ink); text-decoration:underline; text-underline-offset:2px;}
+  a.link:hover{color:var(--accent-2);}
+  code{font-family:var(--mono); font-size:.9em; background:rgba(255,255,255,.06); padding:2px 6px; border-radius:4px;}
+
+  footer{padding:38px 0; border-top:1px solid var(--line-soft);}
+  .foot{display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    font-family:var(--mono); font-size:.76rem; color:var(--faint);}
+  .foot-right{display:flex; align-items:center; gap:16px; flex-wrap:wrap;}
+  .foot-link{color:var(--faint); text-decoration:none; transition:color .15s ease;}
+  .foot-link:hover{color:var(--accent);}
+
+  /* cookie notice (same as home page) */
+  .cookie-banner{
+    position:fixed; left:20px; right:20px; bottom:20px; z-index:60;
+    max-width:640px; margin:0 auto;
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+    background:rgba(10,10,11,.92); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border:1px solid var(--line); border-radius:14px; padding:16px 20px;
+    box-shadow:0 12px 40px rgba(0,0,0,.4);
+    transform:translateY(140%); opacity:0; transition:transform .35s ease, opacity .35s ease;
+    pointer-events:none;
+  }
+  .cookie-banner.show{ transform:translateY(0); opacity:1; pointer-events:auto; }
+  .cookie-text{ flex:1 1 260px; font-size:.86rem; line-height:1.55; color:var(--dim); margin:0; }
+  .cookie-text a{ color:var(--ink); text-decoration:underline; text-underline-offset:2px; }
+  .cookie-actions{ display:flex; align-items:center; gap:14px; flex:none; }
+  .cookie-accept{
+    font-family:var(--sans); font-weight:600; font-size:.85rem; padding:9px 18px;
+    border-radius:999px; border:none; cursor:pointer; background:var(--accent); color:var(--bg);
+    transition:background .18s ease;
+  }
+  .cookie-accept:hover{ background:var(--accent-2); }
+  @media (max-width:480px){
+    .cookie-banner{ left:12px; right:12px; bottom:12px; padding:14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="/" class="brand">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z" fill="#ffffff"/></svg>
+      beyond
+    </a>
+    <a href="/" class="back">← back to site</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <span class="kicker">Legal</span>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: September 2026</p>
+
+    <section>
+      <h2>1. Who we are</h2>
+      <p>This website (<code>salvigiovanni.com</code>, "beyond", "we", "us") is operated by <strong>Giovanni Salvi</strong>, an independent consultant helping non-technical executives set up AI workflows. For any question about this policy or your data, contact <a class="link" href="mailto:btc@salvigiovanni.com">btc@salvigiovanni.com</a>.</p>
+    </section>
+
+    <section>
+      <h2>2. What data we collect</h2>
+      <p>This site has no sign-up, no forms, and no server-side database. We do not collect names, emails, or any personal data through the site itself. Data may reach us only if you choose to contact us directly:</p>
+      <ul>
+        <li><strong>Email</strong> — if you write to <code>btc@salvigiovanni.com</code>, we receive whatever you include in that message (e.g. your name, email address, and the content of your request).</li>
+        <li><strong>Booking a call</strong> — the "Book a call" button opens Calendly (calendly.com) in a new tab. Calendly is a separate, third-party service that processes your name, email, and any details you enter directly, under its own privacy policy. We only see the booking details Calendly shares with us (e.g. your name, email, and the time you selected).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>3. Analytics and tracking</h2>
+      <p>We do not run any analytics, advertising, or tracking scripts on this site (no Google Analytics, Meta Pixel, or similar). We have no visibility into how individual visitors browse the page.</p>
+    </section>
+
+    <section id="cookies">
+      <h2>4. Cookies and local storage</h2>
+      <p>This site does not set any cookies. It uses your browser's <strong>local storage</strong> — a small amount of data kept on your own device, never sent to our servers — for two strictly functional purposes:</p>
+      <ul>
+        <li><code>beyond_lang</code> — remembers your language preference (English/Italian) so you don't have to reselect it on your next visit.</li>
+        <li><code>beyond_cookie_ack</code> — remembers that you've dismissed this cookie notice.</li>
+      </ul>
+      <p>Neither is used for tracking, profiling, or advertising, and under EU guidance this kind of strictly necessary technical storage does not require prior consent. You can clear it anytime through your browser settings, and the site will keep working normally.</p>
+    </section>
+
+    <section>
+      <h2>5. Third-party links</h2>
+      <p>The site links out to external services — Calendly for bookings and LinkedIn for the author's profile. Once you follow one of those links, that service's own privacy policy applies. We recommend reviewing <a class="link" href="https://calendly.com/privacy" target="_blank" rel="noopener noreferrer">Calendly's privacy policy</a> and <a class="link" href="https://www.linkedin.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">LinkedIn's privacy policy</a>.</p>
+    </section>
+
+    <section>
+      <h2>6. Legal basis and retention</h2>
+      <p>Where you contact us by email or book a call, we process the details you share on the basis of our legitimate interest in responding to your enquiry, or to take steps ahead of entering into a contract with you. We keep that correspondence only as long as needed to handle the enquiry or relationship, and delete it once it's no longer necessary.</p>
+    </section>
+
+    <section>
+      <h2>7. Your rights</h2>
+      <p>If you are in the EU/EEA or UK, you have the right, under the GDPR, to:</p>
+      <ul>
+        <li>Access the personal data we hold about you;</li>
+        <li>Ask us to correct or delete it;</li>
+        <li>Restrict or object to its processing;</li>
+        <li>Request a copy in a portable format;</li>
+        <li>Lodge a complaint with your local data protection authority.</li>
+      </ul>
+      <p>To exercise any of these rights, email <a class="link" href="mailto:btc@salvigiovanni.com">btc@salvigiovanni.com</a>.</p>
+    </section>
+
+    <section>
+      <h2>8. Changes to this policy</h2>
+      <p>We may update this page from time to time to reflect changes in how the site works. The "Last updated" date at the top will always reflect the latest revision.</p>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <span>beyond, AI setup for non-technical executives</span>
+      <div class="foot-right">
+        <a href="mailto:btc@salvigiovanni.com" class="foot-link">btc@salvigiovanni.com</a>
+        <a href="https://www.linkedin.com/in/giovanni-s-5aa278158/" target="_blank" rel="noopener noreferrer" class="foot-link">by Giovanni Salvi</a>
+        <span>© 2026</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Cookie notice">
+  <p class="cookie-text">This site uses only essential local storage (to remember your language). No tracking or advertising cookies are set.</p>
+  <div class="cookie-actions">
+    <button type="button" class="cookie-accept" id="cookieAccept">Got it</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var KEY = 'beyond_cookie_ack';
+    var banner = document.getElementById('cookieBanner');
+    var btn = document.getElementById('cookieAccept');
+    if(!banner || !btn) return;
+    var acked = false;
+    try{ acked = localStorage.getItem(KEY) === '1'; }catch(e){}
+    if(!acked){ requestAnimationFrame(function(){ banner.classList.add('show'); }); }
+    btn.addEventListener('click', function(){
+      banner.classList.remove('show');
+      try{ localStorage.setItem(KEY, '1'); }catch(e){}
+    });
+  })();
+</script>
+
+</body>
+</html>
